@@ -17,11 +17,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
 #import sphinx_rtd_theme
-
 
 # -- General configuration ------------------------------------------------
 
@@ -32,10 +31,14 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
+extensions = [
+    'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
-    'sphinx.ext.mathjax']
+    'sphinx.ext.mathjax',
+    'sphinx.ext.autosectionlabel',
+    'sphinx_immaterial',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -88,20 +91,80 @@ todo_include_todos = True
 # a list of builtin themes.
 #
 #html_theme = 'sphinxdoc'
-html_theme = "sphinx_rtd_theme"
-#html_theme_path = ["../_themes/sphinx_rtd_theme", ]
+html_theme = "sphinx_immaterial"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {}
+html_theme_options = {
+  "icon": {
+    "repo": "fontawesome/brands/github",
+    "edit": "material/file-edit-outline",
+  },
+  "site_url": "https://ast560.readthedocs.io/en/latest/",
+  "repo_url": "https://github.com/ammarhakim/ast560-2025",
+  "repo_name": "ast560-2025",
+  #"edit_uri": "blob/main/docs",
+  "globaltoc_collapse": True,
+  "features": [
+    "navigation.expand",
+    # "navigation.tabs",
+    # "toc.integrate",
+    "navigation.sections",
+    # "navigation.instant",
+    # "header.autohide",
+    "navigation.top",
+    # "navigation.tracking",
+    # "search.highlight",
+    "search.share",
+    "toc.follow",
+    "toc.sticky",
+    "content.tabs.link",
+    "announce.dismiss",
+  ],
+  "palette": [
+    {
+      "media": "(prefers-color-scheme: light)",
+      "scheme": "default",
+      "primary": "blue",
+      "accent": "indigo",
+      "toggle": {
+        "icon": "material/lightbulb-outline",
+        "name": "Switch to dark mode",
+      },
+    },
+    {
+      "media": "(prefers-color-scheme: dark)",
+      "scheme": "slate",
+      "primary": "blue",
+      "accent": "indigo",
+      "toggle": {
+        "icon": "material/lightbulb",
+        "name": "Switch to light mode",
+      },
+
+    },
+  ],
+  "toc_title_is_page_title": True,
+  # BEGIN: social icons
+  "social": [
+    {
+      "icon": "fontawesome/brands/github",
+      "link": "https://github.com/ammarhakim/ast560-2025",
+      "name": "Source on github.com",
+    },
+  ],
+}
+html_logo = "_static/logoG1.png"
+html_favicon = "_static/logo.svg"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+html_css_files = ['theme_overrides.css']  # override wide tables in RTD theme
 
 # -- Options for HTMLHelp output ------------------------------------------
 
