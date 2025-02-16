@@ -1,5 +1,5 @@
-Readings on Plasma & Self-Gravitating Systems Kinetic Theory
-------------------------------------------------------------
+Readings on Kinetic Theory of Plasma & Self-Gravitating Systems 
+---------------------------------------------------------------
 
 For a detailed course on plasma kinetic theory please see the web-page
 of the `Kinetic Theory Course
