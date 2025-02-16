@@ -90,71 +90,14 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinxdoc'
-#html_theme = "sphinx_immaterial"
+#html_theme = 'sphinxdoc'
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 html_theme_options = {
-  "icon": {
-    "repo": "fontawesome/brands/github",
-    "edit": "material/file-edit-outline",
-  },
-  "site_url": "https://ast560.readthedocs.io/en/latest/",
-  "repo_url": "https://github.com/ammarhakim/ast560-2025",
-  "repo_name": "ast560-2025",
-  #"edit_uri": "blob/main/docs",
-  "globaltoc_collapse": True,
-  "features": [
-    "navigation.expand",
-    # "navigation.tabs",
-    # "toc.integrate",
-    "navigation.sections",
-    # "navigation.instant",
-    # "header.autohide",
-    "navigation.top",
-    # "navigation.tracking",
-    # "search.highlight",
-    "search.share",
-    "toc.follow",
-    "toc.sticky",
-    "content.tabs.link",
-    "announce.dismiss",
-  ],
-  "palette": [
-    {
-      "media": "(prefers-color-scheme: light)",
-      "scheme": "default",
-      "primary": "blue",
-      "accent": "indigo",
-      "toggle": {
-        "icon": "material/lightbulb-outline",
-        "name": "Switch to dark mode",
-      },
-    },
-    {
-      "media": "(prefers-color-scheme: dark)",
-      "scheme": "slate",
-      "primary": "blue",
-      "accent": "indigo",
-      "toggle": {
-        "icon": "material/lightbulb",
-        "name": "Switch to light mode",
-      },
-
-    },
-  ],
-  "toc_title_is_page_title": True,
-  # BEGIN: social icons
-  "social": [
-    {
-      "icon": "fontawesome/brands/github",
-      "link": "https://github.com/ammarhakim/ast560-2025",
-      "name": "Source on github.com",
-    },
-  ],
 }
 html_logo = "_static/logoG1.png"
 html_favicon = "_static/logo.svg"
