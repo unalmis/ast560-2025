@@ -1,0 +1,288 @@
+\documentclass[12pt]{article}
+
+\usepackage{tikz}
+\usetikzlibrary{decorations.markings}
+
+%\usepackage{geometry}
+%\geometry{paperwidth=170mm, paperheight=240mm, left=42pt, top=40pt, textwidth=280pt, marginparsep=20pt, marginparwidth=100pt, textheight=560pt, footskip=40pt}
+
+%\documentclass[12pt]{amsart}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage{geometry}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{color}
+\usepackage{sidecap}
+\usepackage{physics}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{verse}
+\usepackage{hyperref}
+\usepackage{tensor}
+\usepackage{marginnote}
+\usepackage{wrapfig}
+\usepackage[font={small}]{caption}
+
+\newcommand{\gke}{\texttt{Gkeyll}}
+
+\newcommand{\attrib}[1]{
+\nopagebreak{\raggedleft\footnotesize #1\par}\vskip0.1in}
+\renewcommand{\poemtitlefont}{\normalfont\large\itshape\centering}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newtheorem{principle}{Principle}
+\theoremstyle{definition}
+\newtheorem{exmp}{Example}
+
+\theoremstyle{definition}
+\newtheorem{entry}{Entry}
+
+\theoremstyle{definition}
+\newtheorem{exer}{Exercise}
+
+% auto-scaled figured
+\newcommand{\incfig}{\centering\includegraphics}
+\setkeys{Gin}{width=0.9\linewidth,keepaspectratio}
+
+% Commonly used macros
+\newcommand{\eqr}[1]{Eq.\thinspace(#1)}
+\newcommand{\pfrac}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pfracc}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+\newcommand{\pfraca}[1]{\frac{\partial}{\partial #1}}
+\newcommand{\pfracb}[2]{\partial #1/\partial #2}
+\newcommand{\pfracbb}[2]{\partial^2 #1/\partial #2^2}
+\newcommand{\spfrac}[2]{{\partial_{#1}} {#2}}
+\newcommand{\mvec}[1]{\mathbf{#1}}
+\newcommand{\bmvec}[1]{\breve{\mathbf{#1}}}
+\newcommand{\gvec}[1]{\boldsymbol{#1}}
+\newcommand{\script}[1]{\mathpzc{#1}}
+\newcommand{\gcn}{\nabla}
+\newcommand{\gcs}{\nabla_{\mvec{x}}}
+\newcommand{\gvs}{\nabla_{\mvec{v}}}
+
+\newcommand{\resetall}{\setcounter{entry}{0}\setcounter{equation}{0}\setcounter{footnote}{0}}
+
+\newcommand{\cbas}[1]{\gvec{\sigma}_{#1}}
+\newcommand{\xbas}{\gvec{\sigma}_{1}}
+\newcommand{\ybas}{\gvec{\sigma}_{2}}
+\newcommand{\zbas}{\gvec{\sigma}_{3}}
+
+\newcommand{\basis}[1]{\mvec{e}_{#1}}
+\newcommand{\bbasis}[1]{\breve{\mvec{e}}_{#1}}
+\newcommand{\dbasis}[1]{\mvec{e}^{#1}}
+\newcommand{\bdbasis}[1]{\breve{\mvec{e}}^{#1}}
+
+\newcommand{\nbasis}[1]{\hat{\mvec{e}}_{#1}}
+\newcommand{\ndbasis}[1]{\hat{\mvec{e}}^{#1}}
+
+\newcommand{\gbasis}[2]{\mvec{#1}_{#2}}
+\newcommand{\gdbasis}[2]{\mvec{#1}^{#2}}
+
+\newcommand{\veps}{\gvec{\varepsilon}}
+\newcommand{\bdum}{\breve{\_}}
+\newcommand{\vecspace}{\mathcal{V}}
+\newcommand{\tvecspace}{T_pM}
+\newcommand{\vnorm}[1]{\lVert{#1}\rVert}
+
+\newcommand{\gsel}[2]{\langle{#1}\rangle_{#2}}
+\newcommand{\gzsel}[1]{\langle {#1} \rangle}
+
+\newcommand{\uln}[1]{\underline{#1}}
+
+\newcommand{\dprod}{\mathfrak{D}}
+
+\newcommand{\dvol}{\thinspace d^3\mvec{x}}
+\newcommand{\dsurf}{\thinspace ds}
+
+% Make the items smaller
+\newcommand{\cramplist}{
+	\setlength{\itemsep}{0in}
+	\setlength{\partopsep}{0in}
+	\setlength{\topsep}{0in}}
+\newcommand{\cramp}{\setlength{\parskip}{.5\parskip}}
+\newcommand{\zapspace}{\topsep=0pt\partopsep=0pt\itemsep=0pt\parskip=0pt}
+
+%\marginpar{\raggedleft\footnotesize Margin note}
+
+\title{AST560 2025: The Advection-Diffusion Equation}%
+\author{Ammar H. Hakim}%
+ \date{}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\section{Properties of the Advection-Diffusion Equation}
+
+The advection-diffusion equation is a fundamental equation that
+describes the transport of a scalar field, $f(\mvec{x},t)$ in a given
+flow field. For scalar diffusion we can write this equation as
+\begin{align}
+  \pfrac{f}{t}
+  +
+  \gcn\cdot(\mvec{u} f)
+  =
+  \gcn\cdot(\alpha \gcn f).
+  \label{eq:adv-diff}
+\end{align}
+Here $\mvec{u}(\mvec{x},t)$ is a \emph{given} time-dependent flow
+field, and $\alpha(\mvec{x},t)$ is a \emph{given} time-dependent
+diffusion coefficient. If we take the flow and diffusion as given,
+this is a \emph{linear equation} for the scalar
+$f(\mvec{x},t)$. Despite the apparent simplicity of this equation it
+is fundamental to understanding the physics of mixing processes in
+fluids and plasmas (which can be chaotic), and forms a good model and
+a starting point for more complicated equations. For example, the
+Vlasov-Maxwell equation and gyrokinetic equations are both
+advection-diffusion euqations in \emph{phase-space} and though
+nonlinear, can be solved with schemes similar to those we will develop
+for this linear equation.
+
+Before we develop numerical methods to solve this equation we will
+derive some important properties of the continuous system. There are
+several reasons to do this analysis. First, it allows us to design
+schemes that also mimic these properties in the discrete limit. Not
+all continuous properties are inherited by the discrete scheme, and,
+in fact, it may be possible that some properties may be \emph{harmful}
+to mimic. Second, as we will see, a careful study of the proofs of the
+continuous properties give us hints on how to contruct proofs for the
+discrete properties.
+
+
+We will begin by deriving a \emph{weak-form} of
+\eqr{\ref{eq:adv-diff}}. Let $w(\mvec{x},t)$ be a smooth
+function\footnote{A smooth function is one that is continuous and has
+  as many continuous derivatives as we need.}. Then, multiply
+\eqr{\ref{eq:adv-diff}} by $w$ and integrate over an arbitrary volume
+$\Omega$ to get
+\begin{align}
+  \int_\Omega w \pfrac{f}{t} \dvol
+  +
+  \oint_{\partial\Omega}
+  w (\mvec{u} f - \alpha \gcn f)\cdot \mvec{n} \dsurf
+  -
+  \int_\Omega \gcn w \cdot (\mvec{u} f - \alpha \gcn f)  \dvol
+  =
+  0.
+  \label{eq:adv-diff-weak}
+\end{align}
+\begin{wrapfigure}{L}{0.25\textwidth}
+\incfig{volelem.png} 
+\caption{Arbitrary cell $\Omega$, with closed bounding surface
+  $\partial\Omega$ and outward-pointing surface normal $\mvec{n}$.}
+\label{fig:volume}
+\end{wrapfigure}
+In this expression $\partial\Omega$ is the surface bounding the volume
+$\Omega$ and $\mvec{n}$ is the outward unit normal to
+$\partial\Omega$. We have rearranged the terms and also used
+integration by parts.
+
+This weak-form, in a sense, is more general than the PDE
+\eqr{\ref{eq:adv-diff}}: as the derivatives are no longer on the
+solution variables, $f$ can be \emph{discontinuous}, and hence the
+weak-form allows a broader class of solutions than the PDE. Later we
+will use this weak-form to directly derive discrete schemes in the
+\emph{discontinuous Galerin} family of algorithms. For now, we will
+use the weak-form to prove a couple of important properties of the
+advection-diffusion equation.
+
+\begin{proposition}
+  The advection-diffusion equation conserves the total amount of
+  scalar quantity. That is
+  \begin{align}
+    \frac{d}{dt} \int_\Omega f \dvol
+    +
+    \oint_{\partial\Omega}
+    (\mvec{u} f - \alpha \gcn f)\cdot \mvec{n}
+    \dsurf
+    =
+    0.
+  \end{align}
+\end{proposition}
+\begin{proof}
+  This proof is trivial: just set $w=1$ in the weak-form
+  \eqr{\ref{eq:adv-diff-weak}}.
+\end{proof}
+
+This proof shows something that recurs in other conservation laws, and
+so is important to understand. The proposition says that the amount of
+``stuff'' in $\Omega$ is \emph{conserved}, that is, it can only change
+due to the flow into and out of the volume $\Omega$ through its
+surface $\partial\Omega$. The quantity $(\mvec{u} f - \alpha \gcn f)$
+is called the \emph{flux}. All conservation laws have this structure:
+some quantity an arbitrary volume can only change due to things
+flowing in and out of that volume.
+
+\begin{proposition}
+  The advection-diffusion equation monotonically decays the $L_2$-norm
+  of $f$ if the flow is incompressible, $\gcn\cdot\mvec{u} = 0$, and
+  $\alpha > 0$. The $L_2$-norm is conserved if $\gcn\cdot\mvec{u} =
+  0$ and $\alpha = 0$.
+\end{proposition}
+\begin{proof}
+  Choose $w=f$ in the weak-form \eqr{\ref{eq:adv-diff-weak}} to get
+\begin{align*}
+  \frac{d}{dt}\int_\Omega \frac{1}{2}f^2 \dvol
+  +
+  \oint_{\partial\Omega}
+  (\mvec{u} f^2 - \alpha \gcn \frac{1}{2} f^2)\cdot \mvec{n} \dsurf
+  -
+  \int_\Omega \gcn f \cdot (\mvec{u} f - \alpha \gcn f)  \dvol
+  =
+  0.
+\end{align*}
+Now, if $\gcn\cdot\mvec{u} = 0$ we can write $\gcn f \cdot \mvec{u} f$
+as $\gcn\cdot(\mvec{u} f^2/2)$ to get
+\begin{align*}
+  \frac{d}{dt}\int_\Omega \frac{1}{2}f^2 \dvol
+  +
+  \oint_{\partial\Omega}
+  (\mvec{u} f^2 - \alpha \gcn \frac{1}{2} f^2)\cdot \mvec{n} \dsurf
+  -
+  \int_\Omega \left(\gcn\cdot\frac{1}{2}\mvec{u} f^2 - \alpha 
+  \| \gcn  f \|^2
+  \right)  \dvol
+  =
+  0.
+\end{align*}
+Doing an integration by parts on the first volume term we finally get
+\begin{align}
+  \frac{d}{dt}\int_\Omega \frac{1}{2}f^2 \dvol
+  +
+  \oint_{\partial\Omega}
+  (\mvec{u} \frac{1}{2} f^2 - \alpha \gcn \frac{1}{2} f^2)\cdot  \mvec{n} \dsurf
+  =
+  -
+  \int_\Omega \alpha \| \gcn  f \|^2 \dvol.
+\end{align}
+If $\alpha > 0$ then this shows that the $L_2$-norm in $\Omega$ decays
+monotonically, and remains conserved if $\alpha = 0$.
+\end{proof}
+
+Note that in this proof it was crucial that the flow is incompressible,
+$\gcn\cdot\mvec{u} = 0$. Without this we can't show that the
+$L_2$-norm decays. In fact, in a homework problem you will be asked to
+construct a counter-example that explicitly shows that $L_2$-norm can
+\emph{increase or decrease} for compressible flows.
+
+The monotonic decay of the $L_2$-norm is an important property to
+ensure in a discrete scheme. In fact, even when $\alpha=0$, we usually
+have to ensure that the \emph{discrete scheme decays the $L_2$-norm},
+even though the continuous equation conserves it. This is an example
+in which the discrete scheme must \emph{not} mimic the continuous
+properties as otherwise the numerical algorithm is no longer
+\emph{stable}.
+
+\end{document}
+
+
