@@ -319,7 +319,7 @@ The properties above hold for \emph{arbitrary} volumes, and not just a
 were to extend the volume for density conservation to the whole
 domain, then all one could say is that the total amount of $f$ in the
 whole domain remains unchanged. However, this would not preclude $f$
-disappearing at some point in the domain and instantenously
+disappearing at some point in the domain and instantaneously
 reappearing somewhere else again. \emph{Local} conservation laws will
 disallow this. As the volume is arbitrary, the only way $f$ can
 decrease in this volume is by flux out of the surface.
@@ -327,7 +327,7 @@ decrease in this volume is by flux out of the surface.
 \section{Steps Needed in Constructing a Solver}
 
 Now that we have studied a few properties of the equation system we
-wish to discretize we can switch to contructing the discrete
+wish to discretize we can switch to constructing the discrete
 scheme. Notice that we have a \emph{time-dependent} equations with
 first-order time-derivatives, and first and second order spatial
 derivatives. Hence, we must
@@ -361,7 +361,7 @@ continuous scheme are inherited by the discrete scheme.
 
 In general, we will also find that there is a tradeoff between
 accuracy of the scheme and \emph{robustness}. For example, a highly
-accurate scheme could violate positivity, or will develop suporious
+accurate scheme could violate positivity, or will develop spurious
 high-$k$ modes when the spatial scales of the solution approach the
 grid spacing. In general, some form of \emph{regularization}, for
 example, \emph{limiters} or extra diffusion, may be needed to obtain a
@@ -382,22 +382,24 @@ wrong, it \emph{will} go wrong. Eventually. Hence, it is important to
 have a deep understanding of \emph{both} the physics of the equations
 \emph{and} the properties of the discrete system. It is seldom
 fruitful or productive to treat a numerical method as a black-box. The
-deeper one understand the numerics, the better one can be cofident in
-ontaining useful results from them.
+deeper one understand the numerics, the better one can be confident in
+obtaining useful results from them.
 
 \section{Finite-Difference Spatial Discretization}
 
 In the advection-diffusion equation we have first-order and
 second-order derivative operators. We will use
-\emph{finite-differences} to compute these. Finite-difference (FD)
-approximations can be systematically constructed by constructing
-\emph{interpolating polynomials} given values of a function at a set
-of discrete point. The key approach here is to construct an
-\emph{interpolating} polynomial in the following way. Let $x_i$,
-$i=1,\ldots,N$ be a set of locations on a 1D grid and $f = f(x_i)$ the
-corresponding values of $f$ at those points. The first step in
-constructing FD scheme is to use these to construct a continuous
-polynomial $f_h(x)$ that satisfies the property that
+\emph{finite-differences} to compute these, however, accounting for
+some form of \emph{upwinding} that we explain below.
+
+Finite-difference (FD) approximations can be systematically
+constructed by constructing \emph{interpolating polynomials} given
+values of a function at a set of discrete point. The key approach here
+is to construct an \emph{interpolating} polynomial in the following
+way. Let $x_i$, $i=1,\ldots,N$ be a set of locations on a 1D grid and
+$f = f(x_i)$ the corresponding values of $f$ at those points. The
+first step in constructing FD scheme is to use these to construct a
+continuous polynomial $f_h(x)$ that satisfies the property that
 \begin{align}
   f_h(x_i) = f_i
 \end{align}
@@ -432,9 +434,53 @@ points is obvious.
 Once we have the interpolation polynomial we can use it to approximate
 the values and derivatives we need at various places in the
 algorithm. For example, at some arbitrary point $x$ we can approximate
+$f(x) = f_h(x)$, or
 \begin{align}
   \frac{df(x)}{dx} \approx \frac{df_h(x)}{dx}.
 \end{align}
+Evaluation of the interpolation polynomial and its derivative is often
+made much easier by use of a compute algebra system (CAS). I highly
+recommend you use some CAS like Maple, Mathematica, or (my personal
+choice) Maxima. The use a CAS greatly simplified the various algebraic
+manipulations needed and also reduces the possibility of errors.
+
+\begin{wrapfigure}{h,L}{0.4\textwidth}
+\incfig{three-point-stencil.png} 
+\caption{Three cells of a uniform 1D grid. The red curve is a
+  quadratic that fits the cell-center values $f_{L}$, $f_0$ and $f_R$
+  and is used to construct finite-difference schemes.}
+\label{fig:three-point-stencil}
+\end{wrapfigure}
+
+As example, consider we have three cells in a uniform, 1D grid with
+cell spacing $\Delta x$. We will choose to locate the $f$ at
+\emph{cell-centers}. Then we can use the interpolation formula above
+to construct a polynomial $f_h(x)$ in the middle cell,
+$-\Delta x/2 \le x \le \Delta x/2$, assuming, without loss of
+generality, that $x_0 = 0$. Then, for example, we can compute as
+approximation to the second derivative at the point $x_0 = 0$ by
+computing $d^2 f_h/d x^2$ and evaluating the result at $x=0$. We get
+the expected central difference formula
+\begin{align}
+  \frac{\partial ^2f}{\partial x^2}
+  =
+  \frac{f_R - 2 f_0 - f_L}{\Delta x^2}.
+\end{align}
+This, of course, should not be surprising to you but illustrates the
+general procedure for computing approximations from the interpolating
+polynomials.
+
+As we will see below, we will also need to compute the values $f_R$
+and $f_L$ marked in
+Fig.\thinspace\ref{fig:three-point-stencil}. Again, we simply
+evaluate the Lagrange interpolating polynomial at $x = \pm \Delta x/2$
+to get
+\begin{subequations}
+\begin{align}
+  f^+ &= \frac{1}{8} ( 3 f_{R} + 6 f_0 - f_L ) \\
+  f^- &= \frac{1}{8} ( 3 f_{L} + 6 f_0 - f_R ).
+\end{align}
+\end{subequations}
 
 \end{document}
 

@@ -1,0 +1,10 @@
+load("interpol")$
+
+/** Construct a Lagrange interpolation polynomial on a 3-cell stencil */
+p : [ [-dx, fL], [ 0, f0], [ dx, fR] ]$
+fh : lagrange(p, varname='x)$
+
+diff2 : diff(fh, x, 2), fullratsimp$
+
+fp : subst(x=dx/2, fh)$
+fm : subst(x=-dx/2, fh)$

@@ -8,3 +8,5 @@ build/*
 *.bp
 *.h5
 *~
+
+notes/advection-diffusion/advection-diffusion.pdf
