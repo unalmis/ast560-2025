@@ -21,7 +21,7 @@ equation.
 
 Here :math:`f(\mathbf{x},t)` is a (passive) scalar quantity,
 :math:`\mathbf{u}(\mathbf{x},t)` and :math:`\alpha(\mathbf{x},t)` are
-      the (given) advection velocity and diffusion coefficient respectively.
+the (given) advection velocity and diffusion coefficient respectively.
 
 This equation already contains the key features that arise in more
 complex systems and so is a good model to look at carefully. In this
