@@ -1,6 +1,25 @@
 Course Overview
 ---------------
 
+Computational physics allows us to study physical systems using
+computers. However, computational physics *itself* lives at the
+intersection of theoretical physics, applied mathematics and computer
+science. One can consider computational physics as the study of the
+*physics* of discrete systems. Note this is the reverse of how one
+applies computational physics, that is, uses it to study physical
+systems. In this sense, computational physics has nothing to do with
+the "real world" per-se but is a purely mathematical field that
+studies a specific sort of problems inspired by physics. 
+
+See `these two slides <./_static/UDS-No-Free-Lunch.pdf>`_ for a
+definition of the **Ultimate Discrete Scheme** (it does not exist, or
+perhaps exists in the sense of unicorns exists) and the **No Free
+Lunch Principle**. These two principles will guide our development in
+this course.
+
+Vlasov-Maxwell Equations
+++++++++++++++++++++++++
+
 Vast majority of plasma physics is contained in the Vlasov-Maxwell
 equations that describes the evolution of a particle distribution
 :math:`f_s(t,\mathbf{x},\mathbf{v})` function in 6D phase-space. The
