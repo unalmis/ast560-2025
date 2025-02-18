@@ -9,6 +9,8 @@ released under the `Creative Commons CC BY License
 .. toctree::
   :numbered:
   :maxdepth: 1
-  
+
+  classmech  
   background
+  advection-diffusion
   kinetic-reading

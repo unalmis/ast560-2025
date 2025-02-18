@@ -115,7 +115,7 @@
 
 \title{AST560 2025: The Advection-Diffusion Equation}%
 \author{Ammar H. Hakim}%
- \date{}
+\date{\today}
 
 \begin{document}
 \maketitle
@@ -178,7 +178,7 @@ $\Omega$ to get
 \end{align}
 \begin{wrapfigure}{L}{0.25\textwidth}
 \incfig{volelem.png} 
-\caption{Arbitrary cell $\Omega$, with closed bounding surface
+\caption{Arbitrary volume $\Omega$, with closed bounding surface
   $\partial\Omega$ and outward-pointing surface normal $\mvec{n}$.}
 \label{fig:volume}
 \end{wrapfigure}
@@ -390,7 +390,8 @@ obtaining useful results from them.
 In the advection-diffusion equation we have first-order and
 second-order derivative operators. We will use
 \emph{finite-differences} to compute these, however, accounting for
-some form of \emph{upwinding} that we explain below.
+some form of \emph{upwinding} for the advection term that we explain
+below.
 
 Finite-difference (FD) approximations can be systematically
 constructed by constructing \emph{interpolating polynomials} given
