@@ -144,7 +144,7 @@ is fundamental to understanding the physics of mixing processes in
 fluids and plasmas (which can be chaotic), and forms a good model and
 a starting point for more complicated equations. For example, the
 Vlasov-Maxwell equation and gyrokinetic equations are both
-advection-diffusion euqations in \emph{phase-space} and though
+advection-diffusion equations in \emph{phase-space} and though
 nonlinear, can be solved with schemes similar to those we will develop
 for this linear equation.
 
@@ -155,7 +155,7 @@ schemes that also mimic these properties in the discrete limit. Not
 all continuous properties are inherited by the discrete scheme, and,
 in fact, it may be possible that some properties may be \emph{harmful}
 to mimic. Second, as we will see, a careful study of the proofs of the
-continuous properties give us hints on how to contruct proofs for the
+continuous properties give us hints on how to construct proofs for the
 discrete properties.
 
 
@@ -192,7 +192,7 @@ This weak-form, in a sense, is more general than the PDE
 solution variables, $f$ can be \emph{discontinuous}, and hence the
 weak-form allows a broader class of solutions than the PDE. Later we
 will use this weak-form to directly derive discrete schemes in the
-\emph{discontinuous Galerin} family of algorithms. For now, we will
+\emph{discontinuous Galerkin} family of algorithms. For now, we will
 use the weak-form to prove a couple of important properties of the
 advection-diffusion equation.
 
@@ -282,6 +282,159 @@ even though the continuous equation conserves it. This is an example
 in which the discrete scheme must \emph{not} mimic the continuous
 properties as otherwise the numerical algorithm is no longer
 \emph{stable}.
+
+
+
+\begin{wrapfigure}{L}{0.25\textwidth}
+  \incfig{positive-cube.png} 
+  \caption{A small, cubical volume with outflow from all sides. If
+    $f_0>0$ then then $f$ can only decay towards zero, showing
+    solution always remains positive if it is initially so.}
+\end{wrapfigure}
+We prove that solution remains positive if it is initially so. This is
+probably the hardest property to ensure in a discrete scheme.
+\begin{proposition}
+  If the solution initially positive everywhere, then it remains so
+  for all times. That is, if $f(\mvec{x},0) > 0$, then $f(\mvec{x},t)
+  > 0$, for $t>0$.
+\end{proposition}
+\begin{proof}
+  Consider a small, cubical volume with sides $L$ in which $f = f_0$
+  initially. As an extreme case, let the flow be outward on each side
+  and with magnitude $U$. We can ignore diffusion in this box. Then
+  the weak-form shows that we must have
+  \begin{align*}
+    \frac{df}{dt} = -\frac{6U}{L} f.
+  \end{align*}
+  If $f_0$ and as $U>0$, we must have that $f \sim e^{-6U t/L }$. This
+  means that $f$ in the box can only decay towards zero, but never
+  become negative. Any other flow configuration will add $f$ to the
+  box, hence independent of $\mvec{u}$ the solution will always remain
+  positive.
+\end{proof}
+
+The properties above hold for \emph{arbitrary} volumes, and not just a
+\emph{specific} volume. Such local properties are far more powerful
+(and restrictive) than \emph{global} properties. For example, if we
+were to extend the volume for density conservation to the whole
+domain, then all one could say is that the total amount of $f$ in the
+whole domain remains unchanged. However, this would not preclude $f$
+disappearing at some point in the domain and instantenously
+reappearing somewhere else again. \emph{Local} conservation laws will
+disallow this. As the volume is arbitrary, the only way $f$ can
+decrease in this volume is by flux out of the surface.
+
+\section{Steps Needed in Constructing a Solver}
+
+Now that we have studied a few properties of the equation system we
+wish to discretize we can switch to contructing the discrete
+scheme. Notice that we have a \emph{time-dependent} equations with
+first-order time-derivatives, and first and second order spatial
+derivatives. Hence, we must
+\begin{itemize}\cramplist
+\item Choose a \emph{computational grid or mesh} that is appropriate
+  for the problem we wish to solve. For now we will assume simple,
+  rectangular domains and so will use a uniform, rectangular mesh.
+\item Once we choose the mesh, we use a \emph{discrete approximation}
+  to the spatial derivative terms that appear in the equation. For
+  this, we need to carefully consider where on the mesh to compute the
+  various quantities that appear in our equation, and from this
+  construct a discrete derivative operator of sufficient accuracy. The
+  discrete derivative operators will be different, for example, if we
+  use a curvilinear mesh or a triangular mesh. We will consider such
+  meshes later in the course.
+\item We then need to decide how to advance the solution in time: we
+  will replace the time derivative with a discrete approximation and
+  \emph{advance} or \emph{march} the solution forward in time using a
+  ODE solver. We will of course need to prescribed initial condition
+  and apply the appropriate \emph{boundary conditions}.
+\end{itemize}
+
+Each of these steps, mesh generation, constructing spatial discrete
+operators, and choosing a time-stepper are complicated and impact the
+quality of the numerical solution we will obtain. Once we have made
+all these choices we can use the \emph{discrete} scheme to prove
+various properties. Not all properties of the continuous equations are
+inherited by the discrete scheme. Depending on the set of problems we
+wish to study, we may want to ensure some key properties of the
+continuous scheme are inherited by the discrete scheme.
+
+In general, we will also find that there is a tradeoff between
+accuracy of the scheme and \emph{robustness}. For example, a highly
+accurate scheme could violate positivity, or will develop suporious
+high-$k$ modes when the spatial scales of the solution approach the
+grid spacing. In general, some form of \emph{regularization}, for
+example, \emph{limiters} or extra diffusion, may be needed to obtain a
+stable and useful solver.
+
+Of course, implementing the scheme in computer code, specially to
+create a production solver is highly non-trivial: one needs to have
+good programming skills and follow good software engineering
+discipline. The appearance of modern parallel processors and GPUs has
+made the process even more complicated as, in general, one needs to
+have a deep understanding of the underlying hardware to obtain best
+performance from the solver.
+
+Finally, I remark that production solvers applied to ``real'' physics
+or engineering problems will invariably encounter issue that will not
+show up in simple test cases. In fact, if anything \emph{can} go
+wrong, it \emph{will} go wrong. Eventually. Hence, it is important to
+have a deep understanding of \emph{both} the physics of the equations
+\emph{and} the properties of the discrete system. It is seldom
+fruitful or productive to treat a numerical method as a black-box. The
+deeper one understand the numerics, the better one can be cofident in
+ontaining useful results from them.
+
+\section{Finite-Difference Spatial Discretization}
+
+In the advection-diffusion equation we have first-order and
+second-order derivative operators. We will use
+\emph{finite-differences} to compute these. Finite-difference (FD)
+approximations can be systematically constructed by constructing
+\emph{interpolating polynomials} given values of a function at a set
+of discrete point. The key approach here is to construct an
+\emph{interpolating} polynomial in the following way. Let $x_i$,
+$i=1,\ldots,N$ be a set of locations on a 1D grid and $f = f(x_i)$ the
+corresponding values of $f$ at those points. The first step in
+constructing FD scheme is to use these to construct a continuous
+polynomial $f_h(x)$ that satisfies the property that
+\begin{align}
+  f_h(x_i) = f_i
+\end{align}
+for $i=1,\ldots,N$. One way to determine this polynomial is to assume
+a form
+\begin{align}
+  f_h(x) = a_0 + a_1 x + \ldots + a_{N-1} x^{N-1}
+\end{align}
+where $a_j$, $j = 0, \ldots, N-1$ are $N$ coefficients. The condition
+$f_h(x_i) = f_i$ will give us $N$ linear equations to determine the
+$N$ unknowns $a_j$, hence determining the polynomial $f_h(x)$.
+
+In reality we do not actually need to construct or solve any linear
+system. Instead, we can use \emph{Lagrange interpolating} polynomials
+to construct $f_h(x)$ directly. To illustrate, let $N=3$. Then the
+interpolating polynomial is simply
+\begin{align}
+  f_h(x)
+  =
+  \frac{(x-x_2)(x-x_3)}{(x_1-x_2)(x_1-x_3)} f_1 
+  +
+  \frac{(x-x_1)(x-x_3)}{(x_2-x_1)(x_2-x_3)} f_2
+  +
+  \frac{(x-x_1)(x-x_2)}{(x_3-x_1)(x_3-x_2)} f_3.
+\end{align}
+Note the construction of this polynomial: when $x=x_1$, for example,
+the second and third terms vanish, and we get $f_h(x_1) = f_1$, as
+required. Hence, this quadratic polynomial is the interpolation
+polynomial we are seeking. Of course, the generalization to more
+points is obvious.
+
+Once we have the interpolation polynomial we can use it to approximate
+the values and derivatives we need at various places in the
+algorithm. For example, at some arbitrary point $x$ we can approximate
+\begin{align}
+  \frac{df(x)}{dx} \approx \frac{df_h(x)}{dx}.
+\end{align}
 
 \end{document}
 
