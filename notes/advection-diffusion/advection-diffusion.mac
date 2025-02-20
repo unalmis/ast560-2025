@@ -1,3 +1,5 @@
+kill(all)$
+
 load("interpol")$
 load("draw")$
 
@@ -16,9 +18,26 @@ tay(N) := T[0] + sum(T[i]*x^i/factorial(i),i,1,N)$
 tay5 : tay(5)$
 
 slist : [f0 = subst(x=0,tay5), fR = subst(x=dx,tay5), fL = subst(x=-dx,tay5)]$
-errDiff1 : subst(slist, diff1), expand$
-errDiff2 : subst(slist, diff2), expand$
+eDiff1 : subst(slist, diff1), expand$
+eDiff2 : subst(slist, diff2), expand$
 
+eFp : subst(slist, fp) - subst(x=dx/2,tay5), expand$
+eFm : subst(slist, fm) - subst(x=-dx/2,tay5), expand$
+
+/** Fourier analysis */
+fur(x) := exp(%i*k*x)$
+
+slist : [f0 = subst(x=0,fur(x)), fR = subst(x=dx,fur(x)), fL = subst(x=-dx,fur(x))]$
+fDiff1 : subst(slist, diff1), expand$
+fDiff2 : subst(slist, diff2), expand$
+
+kbar : fDiff1$
+
+kbar1 : subst(dx=1, realpart(kbar/%i))$
+plot2d([k, kbar1], [k,0,%pi], grid2d,
+  [style, lines, lines],
+  [style, [lines, 2, red], [lines, 2, blue]]
+  )$
 
 /** Patholigical interpolation using uniform points */
 g(x) := 1/(1 + 10*x^2)$

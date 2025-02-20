@@ -385,7 +385,7 @@ fruitful or productive to treat a numerical method as a black-box. The
 deeper one understand the numerics, the better one can be confident in
 obtaining useful results from them.
 
-\section{Finite-Difference Spatial Discretization}
+\section{Constructing Finite-Difference Formulas}
 
 In the advection-diffusion equation we have first-order and
 second-order derivative operators. We will use
@@ -431,6 +431,26 @@ the second and third terms vanish, and we get $f_h(x_1) = f_1$, as
 required. Hence, this quadratic polynomial is the interpolation
 polynomial we are seeking. Of course, the generalization to more
 points is obvious.
+
+\begin{wrapfigure}{L}{0.4\textwidth}
+\incfig{badfits.pdf} 
+\caption{Pathological interpolation of a smooth function on uniformly
+  spaced set of nodes. Black line is the interpolation polynomial that
+  shows severe oscillations, despite the function (red line) being
+  smooth.}
+\label{fig:badfits}
+\end{wrapfigure}
+
+Interpolation on uniformly spaced points can often give highly
+inaccurate results. For example, conisder the function
+\begin{align}
+  f(x) = \frac{1}{1+ 10 x^2}
+\end{align}
+on $x \in [-1,1]$, This function is smooth but when an interpolating
+polynomial is constructed using uniformly spaced points it behaves in
+a pathological manner. One way around this ``ringing'' is to use a
+\emph{non-uniformly} spaced sets of points, for example, Legendre or
+Chebyshev points.
 
 Once we have the interpolation polynomial we can use it to approximate
 the values and derivatives we need at various places in the
@@ -479,7 +499,7 @@ and $f_L$ marked in
 Fig.\thinspace\ref{fig:three-point-stencil}. Again, we simply
 evaluate the Lagrange interpolating polynomial at $x = \pm \Delta x/2$
 to get
-\begin{subequations}
+\begin{subequations}\label{eq:fedge-vals}
 \begin{align}
   f^+ &= \frac{1}{8} ( 3 f_{R} + 6 f_0 - f_L ) \\
   f^- &= \frac{1}{8} ( 3 f_{L} + 6 f_0 - f_R ).
@@ -489,7 +509,7 @@ to get
 For a smooth $f(x)$ the accuracy of the interpolating polynomial at
 some point $x$ will depend on the size of the \emph{stencil}, that is,
 the number of points (cell-centers in this case) that are used in
-contructing it. To determine the accuracy and convergence of the
+constructing it. To determine the accuracy and convergence of the
 interpolating polynomial we use a Taylor expansion of $f(x)$ around
 $x = 0$:
 \begin{align}
@@ -535,46 +555,77 @@ computed using the finite-difference formula is \emph{second-order
 again showing that the second derivative is also \emph{second-order
   accurate}.
 
-The above Taylor series analysis, of course, depends crucially on the
-fact that the solution $f(x)$ is sufficiently smooth that the needed
-derivatives exist. This may not always be true, for example, in the
-presence of shocks or sharp gradients in the solution. It is also
-clear that the degree of smoothness we need will depend on the stencil
-size (and the order of the derivative we are computing): hence, wider
-stencils (more accurate derivatives) will be increasingly \emph{less}
-robust, with potentially large errors in regions of sharp
-gradients. In general, this means that unless great care is taken,
-very high order methods (third or higher order) are far \emph{less
-  robust} than lower order mehods (second-order). This is one of the
-key reasons that many commercial computational physics packages,
-especially for fluid mechanics\footnote{Solid mechanics and heat
-  transfer problems can be solved with higher order methods, as the
-  solutions are typically much smoother that fluid problems. In the
-  latter, specially in invicid or low viscosity fluids, the flow tends
-  to cascade to shorter wavelenghts (high-$k$) modes.}, typically use
-low-order schemes, sometimes even effectively just first-order
-schemes.
+We can also compute the accuracy of the finite-difference formulas for
+computing the edge values $f^{\pm}$. Using the Taylor expansions in
+\eqr{\ref{eq:fedge-vals}} we get
+\begin{align}
+  f^{\pm} - f(\pm \Delta x/2)
+  = \pm \frac{\Delta x^3}{16} f^{(3)} + \ldots
+\end{align}
+showing that the edge values are computed to \emph{third-order}
+accuracy.
+
+The validity of the above Taylor series analysis, of course, depends
+crucially on the fact that the solution $f(x)$ is sufficiently smooth
+that the needed derivatives exist. This may not always be true, for
+example, in the presence of shocks or sharp gradients in the
+solution. It is also clear that the degree of smoothness we need will
+depend on the stencil size (and the order of the derivative we are
+computing): hence, wider stencils (more accurate derivatives) will be
+increasingly \emph{less} robust, with potentially large errors in
+regions of sharp gradients. In general, this means that unless great
+care is taken, high order methods (third or higher order) are far
+\emph{less robust} than lower order methods (second-order). This is one
+of the key reasons that many commercial computational physics
+packages, especially for fluid mechanics\footnote{Solid mechanics and
+  heat transfer problems can be solved with higher order methods, as
+  the solutions are typically much smoother that fluid problems. In
+  the latter, specially in invicid or low viscosity fluids, the flow
+  tends to cascade to shorter wavelengths (high-$k$) modes.},
+typically use low-order schemes, sometimes even effectively just
+first-order schemes.
+
+Besides Taylor series analysis, we can also do a Fourier analysis to
+understand how a single mode is represented by the finite-difference
+formula for the derivative operators. To do this we will take a single
+Fourier mode
+\begin{align}
+  f(x) = e^{ikx}
+\end{align}
+and substitute this in the finite-difference formula. For, example,
+for the first derivative we have
+\begin{align}
+  \pfrac{f_h}{x}
+  =
+  i\bar{k} = \frac{e^{ik \Delta x } - e^{-ik \Delta x } }{2 \Delta x}.
+\end{align}
+Note that we have used a \emph{modified wave-number} $\bar{k}$ on the
+left as this is what the scheme will actually see, rather than the
+exact wave-number $k$. In general, the modified wave-number will have
+both a real and an imaginary part. In this specific example, as the
+stencil is symmetric $\bar{k}$ only has a real part. We easily see
+that this is
+\begin{align}
+  \bar{k}_R\Delta x = \sin(k\Delta x).
+\end{align}
 
 \begin{wrapfigure}{L}{0.4\textwidth}
-\incfig{badfits.pdf} 
-\caption{Pathological interpolation of a smooth function on uniformly
-  spaced set of nodes. Black line is the interpolation polynomial that
-  shows severe oscillations, despite the function (red line) being
-  smooth.}
+\incfig{kbarp.pdf} 
+\caption{Blue: Numerical wave-number plotted as a function of actual
+  wave-number for central difference scheme for the first
+  derivative. Significant dispersion and aliasing is seen.}
 \label{fig:badfits}
 \end{wrapfigure}
 
-Beside issues with sharp gradients, large stencils (or global
-interpolation) can give highly inaccurate results when using
-\emph{uniformly} spaced points. For example, conisder the function
-\begin{align}
-  f(x) = \frac{1}{1+ 10 x^2}
-\end{align}
-on $x \in [-1,1]$, This function is smooth but when an interpolating
-polynomial is constructed using uniformly spaced points it behaves in
-a pathological manner. One way around this ``ringing'' is to use a
-\emph{non-uniformly} spaced sets of points, for example, Legendre or
-Chebyshev points.
+The figure shows the numerical wave-number $\bar{k}_R$ plotted against
+the actual wave-number. Notice there is strong deviation from the red
+line for even modest waves. This figure shows strong \emph{aliasing}
+of modes: each long wavelength mode is \emph{aliased} to a
+corresponding short wavelength mode. Further, this figure also shows
+that if we were to use the central-difference formula for advection,
+modes with different wave-numbers would propagate with different
+phase- and group velocities, causing \emph{dispersion} of waves.
+
 
 \end{document}
 
