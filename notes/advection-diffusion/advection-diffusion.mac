@@ -1,10 +1,54 @@
 load("interpol")$
+load("draw")$
 
 /** Construct a Lagrange interpolation polynomial on a 3-cell stencil */
 p : [ [-dx, fL], [ 0, f0], [ dx, fR] ]$
 fh : lagrange(p, varname='x)$
 
-diff2 : diff(fh, x, 2), fullratsimp$
+diff1 : subst(x=0, diff(fh, x, 1)), fullratsimp$
+diff2 : subst(x=0, diff(fh, x, 2)), fullratsimp$
 
 fp : subst(x=dx/2, fh)$
 fm : subst(x=-dx/2, fh)$
+
+tay(N) := T[0] + sum(T[i]*x^i/factorial(i),i,1,N)$
+
+tay5 : tay(5)$
+
+slist : [f0 = subst(x=0,tay5), fR = subst(x=dx,tay5), fL = subst(x=-dx,tay5)]$
+errDiff1 : subst(slist, diff1), expand$
+errDiff2 : subst(slist, diff2), expand$
+
+
+/** Patholigical interpolation using uniform points */
+g(x) := 1/(1 + 10*x^2)$
+N : 11$
+dx : 2/(N-1)$
+xn : makelist(-1+dx*i, i, 0, N-1)$
+pn : makelist([xn[i], g(xn[i])], i, 1, N)$
+gn : lagrange(pn, varname='x), expand$
+
+xcn : makelist(cos(i*%pi/(N+1)), i, 0, N+1)$
+pcn : float(makelist([xcn[i], g(xcn[i])], i, 1, length(xcn)))$
+gcn : lagrange(pcn, varname='x), expand$
+
+/* Uniform */
+plot2d([[discrete, pn], g, gn], [x,-1,1],
+  [style, points, lines, lines],
+  [legend, "Nodal", "Exact", "Interp"],
+  [color, blue, red, black]
+  )$
+
+/* Cheb */
+plot2d([[discrete, pcn], g, gcn], [x,-1,1],
+  [style, points, lines, lines],
+  [legend, "Nodal", "Exact", "Cheb"],
+  [color, blue, red, black]
+  )$
+
+/* Cheb diff */
+plot2d([diff(g(x),x), diff(gcn,x)], [x,-1,1],
+  [style, lines, lines],
+  [legend, "Exact", "Cheb"],
+  [color, blue, red]
+  )$

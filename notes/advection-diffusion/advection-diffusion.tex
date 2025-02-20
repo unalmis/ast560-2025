@@ -176,7 +176,7 @@ $\Omega$ to get
   0.
   \label{eq:adv-diff-weak}
 \end{align}
-\begin{wrapfigure}{L}{0.25\textwidth}
+\begin{wrapfigure}[12]{L}{0.25\textwidth}
 \incfig{volelem.png} 
 \caption{Arbitrary volume $\Omega$, with closed bounding surface
   $\partial\Omega$ and outward-pointing surface normal $\mvec{n}$.}
@@ -285,7 +285,7 @@ properties as otherwise the numerical algorithm is no longer
 
 
 
-\begin{wrapfigure}{L}{0.25\textwidth}
+\begin{wrapfigure}[12]{L}{0.25\textwidth}
   \incfig{positive-cube.png} 
   \caption{A small, cubical volume with outflow from all sides. If
     $f_0>0$ then then $f$ can only decay towards zero, showing
@@ -303,9 +303,9 @@ probably the hardest property to ensure in a discrete scheme.
   initially. As an extreme case, let the flow be outward on each side
   and with magnitude $U$. We can ignore diffusion in this box. Then
   the weak-form shows that we must have
-  \begin{align*}
+  \begin{align}
     \frac{df}{dt} = -\frac{6U}{L} f.
-  \end{align*}
+  \end{align}
   If $f_0$ and as $U>0$, we must have that $f \sim e^{-6U t/L }$. This
   means that $f$ in the box can only decay towards zero, but never
   become negative. Any other flow configuration will add $f$ to the
@@ -445,7 +445,7 @@ recommend you use some CAS like Maple, Mathematica, or (my personal
 choice) Maxima. The use a CAS greatly simplified the various algebraic
 manipulations needed and also reduces the possibility of errors.
 
-\begin{wrapfigure}{h,L}{0.4\textwidth}
+\begin{wrapfigure}[14]{L}{0.4\textwidth}
 \incfig{three-point-stencil.png} 
 \caption{Three cells of a uniform 1D grid. The red curve is a
   quadratic that fits the cell-center values $f_{L}$, $f_0$ and $f_R$
@@ -461,11 +461,14 @@ $-\Delta x/2 \le x \le \Delta x/2$, assuming, without loss of
 generality, that $x_0 = 0$. Then, for example, we can compute as
 approximation to the second derivative at the point $x_0 = 0$ by
 computing $d^2 f_h/d x^2$ and evaluating the result at $x=0$. We get
-the expected central difference formula
+the expected central difference formulas
 \begin{align}
-  \frac{\partial ^2f}{\partial x^2}
-  =
-  \frac{f_R - 2 f_0 - f_L}{\Delta x^2}.
+  \frac{\partial f_h}{\partial x}
+  &=
+  \frac{f_R - f_L}{2 \Delta x} \\
+  \frac{\partial ^2f_h}{\partial x^2}
+  &=
+  \frac{f_R - 2 f_0 + f_L}{\Delta x^2}.
 \end{align}
 This, of course, should not be surprising to you but illustrates the
 general procedure for computing approximations from the interpolating
@@ -483,6 +486,95 @@ to get
 \end{align}
 \end{subequations}
 
-\end{document}
+For a smooth $f(x)$ the accuracy of the interpolating polynomial at
+some point $x$ will depend on the size of the \emph{stencil}, that is,
+the number of points (cell-centers in this case) that are used in
+contructing it. To determine the accuracy and convergence of the
+interpolating polynomial we use a Taylor expansion of $f(x)$ around
+$x = 0$:
+\begin{align}
+  f(x) = \sum_{n=0} f^{(n)} \frac{x^n}{n!} \label{eq:taylor-f}
+\end{align}
+where $f^{(n)}$ is the $n$-th derivative of $f(x)$ evaluated at
+$x=0$. We can now use this expansion in the finite-difference
+expressions and compare with the exact derivatives. For example we can
+compute
+\begin{align}
+  f_R 
+  &= f(\Delta x) 
+  = f_0 + \Delta x f^{(1)} + \frac{\Delta x^2}{2} f^{(2)}  
+  + \frac{\Delta x^3}{6} f^{(3)}  + \ldots \\
+  f_L
+  &= f(-\Delta x) 
+  = f_0 - \Delta x f^{(1)} + \frac{\Delta x^2}{2} f^{(2)}  
+  - \frac{\Delta x^3}{6} f^{(3)}  + \ldots.
+\end{align}
+Using this in the finite-difference formula for the first derivative
+we get
+\begin{align}
+  \frac{\partial f_h}{\partial x}
+  =
+  \frac{f_R - f_L}{2 \Delta x}
+  =
+  f^{(1)}
+  +
+  \frac{\Delta x^2}{6} f^{(3)} + \ldots
+\end{align}
+This shows that with the $3$-point stencil, the first derivative
+computed using the finite-difference formula is \emph{second-order
+  accurate}. In the same way we can compute
+\begin{align}
+  \frac{\partial^2 f_h}{\partial x^2}
+  =
+  \frac{f_R - 2 f_0 + f_L}{\Delta x^2}
+  =
+  f^{(2)}
+  +
+  \frac{\Delta x^2}{12} f^{(4)} + \ldots
+\end{align}
+again showing that the second derivative is also \emph{second-order
+  accurate}.
 
+The above Taylor series analysis, of course, depends crucially on the
+fact that the solution $f(x)$ is sufficiently smooth that the needed
+derivatives exist. This may not always be true, for example, in the
+presence of shocks or sharp gradients in the solution. It is also
+clear that the degree of smoothness we need will depend on the stencil
+size (and the order of the derivative we are computing): hence, wider
+stencils (more accurate derivatives) will be increasingly \emph{less}
+robust, with potentially large errors in regions of sharp
+gradients. In general, this means that unless great care is taken,
+very high order methods (third or higher order) are far \emph{less
+  robust} than lower order mehods (second-order). This is one of the
+key reasons that many commercial computational physics packages,
+especially for fluid mechanics\footnote{Solid mechanics and heat
+  transfer problems can be solved with higher order methods, as the
+  solutions are typically much smoother that fluid problems. In the
+  latter, specially in invicid or low viscosity fluids, the flow tends
+  to cascade to shorter wavelenghts (high-$k$) modes.}, typically use
+low-order schemes, sometimes even effectively just first-order
+schemes.
+
+\begin{wrapfigure}{L}{0.4\textwidth}
+\incfig{badfits.pdf} 
+\caption{Pathological interpolation of a smooth function on uniformly
+  spaced set of nodes. Black line is the interpolation polynomial that
+  shows severe oscillations, despite the function (red line) being
+  smooth.}
+\label{fig:badfits}
+\end{wrapfigure}
+
+Beside issues with sharp gradients, large stencils (or global
+interpolation) can give highly inaccurate results when using
+\emph{uniformly} spaced points. For example, conisder the function
+\begin{align}
+  f(x) = \frac{1}{1+ 10 x^2}
+\end{align}
+on $x \in [-1,1]$, This function is smooth but when an interpolating
+polynomial is constructed using uniformly spaced points it behaves in
+a pathological manner. One way around this ``ringing'' is to use a
+\emph{non-uniformly} spaced sets of points, for example, Legendre or
+Chebyshev points.
+
+\end{document}
 
