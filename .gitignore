@@ -8,6 +8,8 @@ build/*
 *.bp
 *.h5
 *~
+*.gkyl
+*.dat
 
 code/gminus/build/
 code/gminus/config.mak
