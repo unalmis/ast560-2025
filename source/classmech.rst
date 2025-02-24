@@ -29,6 +29,53 @@ do everything you need).
 
 **We will update this section with more details as we go along**
 
+Postgkyl Installation Instructions
+++++++++++++++++++++++++++++++++++
+Postgkyl is a Python-based post processing tool for analyzing and visualizing 
+Gkeyll data. Instructions for installing Postgkyl on a range of platforms can be 
+found at 
+`read the docs <https://gkeyll.readthedocs.io/en/latest/install.html#postgkyl-install>`_ 
+or on the 
+`github page <https://github.com/ammarhakim/postgkyl?tab=readme-ov-file>`_.
+
+Postgkyl on local Mac/Linux will require you to have Conda. One option is to 
+download Anaconda for your specific platform 
+`Anaconda docs <https://docs.anaconda.com/anaconda/install/>`_ and test the 
+install by opening a terminal and verifying the install was successful with::
+
+  conda --version
+
+Alternatively, if you are working on a cluster such as Stellar or Perlmutter
+you can load the Anaconda module (required for stellar only, Perlmutter 
+loads this module by default)::
+
+  module load anaconda3/2024.2
+
+Once Conda is setup, install Postgkyl from a terminal with::
+
+  git clone https://github.com/ammarhakim/postgkyl.git
+  cd postgkyl
+  conda env create -f environment.yml
+  conda activate pgkyl     
+  pip install -e .
+  pytest [-v]
+
+The installation is complete if pytests passes all 28 postgkyl tests. If
+pytest fails, ensure you are in the correct enviroment (pgkyl), all dependencies
+have successfully installed, and you have pip installed Postgkyl.
+
+The next time you open a terminal, to activate Postgkyl simply reactivate 
+the Postgkyl environment with::
+
+  conda activate pgkyl
+
+For Stellar only, you will need you to load Anaconda before activative the 
+enviroment::
+
+  module load anaconda3/2024.2 
+  conda activate pgkyl
+
+
 On use of the Maxima CAS
 ++++++++++++++++++++++++
 
