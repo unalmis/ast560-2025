@@ -41,31 +41,36 @@ or on the
 Postgkyl on local Mac/Linux will require you to have Conda. One option is to 
 download Anaconda for your specific platform 
 `here <https://docs.anaconda.com/anaconda/install/>`_ and test the 
-install by opening a terminal and verifying the install was successful with
-``conda --version``
+install by opening a terminal and verifying the install was successful with::
+
+  conda --version
 
 Alternatively, if you are working on a cluster such as Stellar or Perlmutter
 you can load the Anaconda module (required for stellar only, Perlmutter 
-loads this module by default)
-# Stellar Only: Load Anaconda module
-``module load anaconda3/2024.2``
+loads this module by default) |
+# Stellar Only: Load Anaconda module::
 
-Once Conda is setup, install Postgkyl 
-``git clone https://github.com/ammarhakim/postgkyl.git``
-``cd postgkyl``
-``conda env create -f environment.yml``
-``conda activate pgkyl``     
-``pip install -e .``
-``pytest [-v]``
+  module load anaconda3/2024.2
+
+Once Conda is setup, install Postgkyl::
+
+  git clone https://github.com/ammarhakim/postgkyl.git
+  cd postgkyl
+  conda env create -f environment.yml
+  conda activate pgkyl     
+  pip install -e .
+  pytest [-v]
+
 The installation is complete if pytests passes all 28 postgkyl tests. If
 pytest fails, ensure you are in the correct enviroment (pgkyl), all dependencies
 have successfully installed, and you have pip installed Postgkyl.
 
 The next time you open a terminal, to activate Postgkyl simply reactivate 
-the Postgkyl environment with
-# Stellar Only: Load Anaconda module
-``module load anaconda3/2024.2``    
-``conda activate pgkyl``
+the Postgkyl environment with |
+# Stellar Only: Load Anaconda module::
+
+  module load anaconda3/2024.2    
+  conda activate pgkyl
 
 
 On use of the Maxima CAS
