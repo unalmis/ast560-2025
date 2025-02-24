@@ -47,7 +47,7 @@ install by opening a terminal and verifying the install was successful with::
 
 Alternatively, if you are working on a cluster such as Stellar or Perlmutter
 you can load the Anaconda module (required for stellar only, Perlmutter 
-loads this module by default)
+loads this module by default)::
 
   module load anaconda3/2024.2
 
@@ -69,7 +69,8 @@ the Postgkyl environment with::
 
   conda activate pgkyl
 
-For Stellar only, you will need you to load Anaconda again::
+For Stellar only, you will need you to load Anaconda before activative the 
+enviroment::
 
   module load anaconda3/2024.2 
   conda activate pgkyl
