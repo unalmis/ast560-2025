@@ -32,9 +32,15 @@ fDiff1 : subst(slist, diff1), expand$
 fDiff2 : subst(slist, diff2), expand$
 
 kbar : fDiff1$
-
 kbar1 : subst(dx=1, realpart(kbar/%i))$
 plot2d([k, kbar1], [k,0,%pi], grid2d,
+  [style, lines, lines],
+  [style, [lines, 2, red], [lines, 2, blue]]
+  )$
+
+kbar : fDiff2$
+kbar1 : subst(dx=1, realpart(kbar))$
+plot2d([0, kbar1], [k,0,%pi], grid2d,
   [style, lines, lines],
   [style, [lines, 2, red], [lines, 2, blue]]
   )$

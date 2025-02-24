@@ -1,0 +1,137 @@
+#!/bin/sh
+
+OSTYPE=`uname -o`
+MACHINE=`uname -n`
+USER=`whoami`
+echo "# OS type is $OSTYPE on $MACHINE user $USER"
+
+# Defaults
+PREFIX=${HOME}/gkylsoft
+
+# default build options
+CC=cc
+ARCH_FLAGS=-march=native
+CUDA_ARCH=70
+
+USE_MPI=
+USE_LUA=
+USE_ADAS=
+CONF_LUA_LIB=luajit-5.1
+
+# Location of CUDA math libraries
+CUDAMATH_LIBS=
+
+# ----------------------------------------------------------------------------
+# Function definitions
+# ----------------------------------------------------------------------------
+
+show_help() {
+cat <<EOF
+
+./configure [options=value]
+
+Configure GkeyllZero build system. This step is optional if you are
+okay with the default parameters.
+
+NOTE: At present, the configure script DOES NOT check if you have
+specified valid paths. YOU are responsible for setting them correctly!
+
+CC                         C compiler to use. Default is system cc
+ARCH_FLAGS                 Architecture flags to use. Default '-march=native'
+
+-h
+--help                     This help.
+--prefix=DIR               Prefix where gminus is installed
+                           Default is $HOME/gkylsoft/
+EOF
+}
+
+# Helper functions
+
+find_program() {
+   prog=`command -v "$1" 2>/dev/null`
+   if [ -n "$prog" ]
+   then
+      dirname "$prog"
+   fi
+}
+
+die() {
+   echo "$*"
+   echo
+   echo "Configured failed."
+   echo
+   exit 1
+}
+
+# ----------------------------------------------------------------------------
+# MAIN PROGRAM
+# ----------------------------------------------------------------------------
+
+# Parse options
+
+while [ -n "$1" ]
+do
+   value="`echo $1 | sed 's/[^=]*.\(.*\)/\1/'`"
+   key="`echo $1 | sed 's/=.*//'`"
+   if `echo "$value" | grep "~" >/dev/null 2>/dev/null`
+   then
+      echo
+      echo '*WARNING*: the "~" sign is not expanded in flags.'
+      echo 'If you mean the home directory, use $HOME instead.'
+      echo
+   fi
+   case "$key" in
+   -h)
+      show_help
+      exit 0
+      ;;
+   --help)
+      show_help
+      exit 0
+      ;;
+   CC)
+      [ -n "$value" ] || die "Missing value in flag $key."
+      CC="$value"
+      ;;
+   ARCH_FLAGS)
+      [ -n "$value" ] || die "Missing value in flag $key."
+      ARCH_FLAGS="$value"
+      ;;   
+   --prefix)
+      [ -n "$value" ] || die "Missing value in flag $key."
+      PREFIX="$value"
+      ;;
+   --use-lua)
+      [ -n "$value" ] || die "Missing value in flag $key."
+      USE_LUA="$value"
+      ;;       
+   --lua-inc)
+      [ -n "$value" ] || die "Missing value in flag $key."
+      CONF_LUA_INC_DIR="$value"
+      ;;
+   --lua-lib)
+      [ -n "$value" ] || die "Missing value in flag $key."
+      CONF_LUA_LIB_DIR="$value"
+      ;;   
+   *)
+      die "Error: Unknown flag: $1"
+      ;;
+   esac
+   shift
+done
+
+# Write out config.mak
+cat <<EOF1 > config.mak
+# Generated automatically! Do not edit
+
+# Installation directory
+PREFIX=$PREFIX
+# Compilers
+CC=$CC
+ARCH_FLAGS=$ARCH_FLAGS
+
+EOF1
+
+echo "# Wrote config.mak with contents:"
+cat config.mak

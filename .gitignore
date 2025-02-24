@@ -9,4 +9,7 @@ build/*
 *.h5
 *~
 
+code/gminus/build/
+code/gminus/config.mak
+
 notes/advection-diffusion/advection-diffusion.pdf

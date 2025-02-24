@@ -626,6 +626,23 @@ that if we were to use the central-difference formula for advection,
 modes with different wave-numbers would propagate with different
 phase- and group velocities, causing \emph{dispersion} of waves.
 
+In a similar manner we can do a Fourier analysis of the
+finite-difference formula for the second derivative. This time we will
+get
+\begin{align}
+  \frac{\partial ^2f_h}{\partial x^2}
+  =
+  -\bar{k}^2 = \frac{e^{ik \Delta x } - 2 + e^{-ik \Delta x } }{\Delta x^2}.
+\end{align}
+The RHS has only a real part, which we can compute as
+\begin{align}
+  \bar{k}^2\Delta x^2 = 2 - 2 \cos(k \Delta x).
+\end{align}
+
+What does this show? If we were to evolve a diffusion equation with
+the central difference formula the scheme would instead damp a mode
+with $-\bar{k}^2$ instead of $-k^2$. Hence, the numerical scheme will
+damp a mode with a \emph{modified} diffusion coefficient
 
 \end{document}
 
