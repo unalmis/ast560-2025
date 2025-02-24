@@ -11,6 +11,8 @@ build/*
 *.gkyl
 *.dat
 
+code/gminus/.cache/
+code/gminus/compile_commands.json
 code/gminus/build/
 code/gminus/config.mak
 

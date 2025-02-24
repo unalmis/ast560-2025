@@ -20,7 +20,7 @@ UNAME = $(shell uname)
 BUILD_DIR ?= build
 
 # Directories containing source code
-SRC_DIRS := minus zero
+SRC_DIRS := minus zero kernels
 
 LLIB := $(BUILD_DIR)/libg0core.a
 SRCS := $(shell find $(SRC_DIRS) -name *.c)
@@ -29,8 +29,8 @@ DEPS := $(OBJS:.o=.d)
 UNITS := $(patsubst %.c,${BUILD_DIR}/%,$(wildcard unit/ctest_*.c))
 
 # list of includes from kernels
-KERN_INC_DIRS = 
-KERN_INCLUDES = 
+KERN_INC_DIRS = $(shell find kernels -type d)
+KERN_INCLUDES = $(addprefix -I,$(KERN_INC_DIRS))
 INCS := -Iminus -Iminus/STC/include -Izero $(KERN_INCLUDES)
 
 EXEC_LIB_DIRS = 
