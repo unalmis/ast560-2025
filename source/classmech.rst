@@ -29,7 +29,7 @@ do everything you need).
 
 **We will update this section with more details as we go along**
 
-Postgkyl installation Instructions
+Postgkyl Installation Instructions
 ++++++++++++++++++++++++++++++++++
 Postgkyl is a Python-based post processing tool for analyzing and visualizing 
 Gkeyll data. Instructions for installing Postgkyl on a range of platforms can be 
@@ -51,7 +51,7 @@ loads this module by default)::
 
   module load anaconda3/2024.2
 
-Once Conda is setup, install Postgkyl::
+Once Conda is setup, install Postgkyl from a terminal with::
 
   git clone https://github.com/ammarhakim/postgkyl.git
   cd postgkyl
