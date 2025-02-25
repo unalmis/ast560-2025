@@ -635,6 +635,7 @@ Using the Fourier expansion $f_h(x) = e^{-i\omega t} e^{ikx}$ we get
 This gives a numerical dispersion relation
 \begin{align}
   \omega \Delta x  =  u \bar{k} \Delta x = u \sin(k\Delta x).
+  \label{eq:adv-1d-cd-disp}
 \end{align}
 Hence, the discrete scheme ``sees'' a \emph{modified wave-number}
 $\bar{k}$ rather than the exact wave-number $k$. In general, the
@@ -679,7 +680,8 @@ as we see in the right-panel of Fig.\thinspace\ref{fig:num-disp} the
 high-$k$ modes will be \emph{under-damped} by this central difference
 scheme.
 
-\subsection{Discrete $L_2$ conservation for 1D advection}
+\subsection{Discrete $L_2$ conservation, monotonicity and Godunov's
+  Theorem}
 
 The Fourier analysis of the semi-discrete 1D diffusion equation with
 central differences shows that there is no damping of modes. This
@@ -738,6 +740,82 @@ in this analysis: this proof of $L_2$ conservation only holds in the
 integrator we choose the $L_2$ for the \emph{fully discrete} scheme
 may actually \emph{decay} (for example, with strong-stability
 preserving Runge-Kutta schemes described below).
+
+\begin{wrapfigure}[16]{L}{0.45\textwidth}
+\incfig{a560-adv-1d-cd.pdf} 
+\caption{Advection of a Gaussian (red) with a central-difference scheme
+  shows large, spurious oscillations (black), even though the $L_2$
+  norm is conserved.}
+\end{wrapfigure}
+
+It may appear that it is good news that the central difference scheme
+conserves the $L_2$ norm. However, it is not so. We can again use the
+dispersion relation for the linear advection equation we derived above
+(see \eqr{\ref{eq:adv-1d-cd-disp}}) to see this, even without writing
+any code. Take an initial condition $f(x,0)$ and Fourier decompose
+it. Propagate each Fourier mode in time using the dispersion
+relation. Take the inverse Fourier transform. If we do this for a
+simple Gaussian $f(x,0) = e^{-a^2 x^2}$ we see that for $u = 1$ as the
+Guassian propogates it creates large regions of spurious oscillations
+as well as negativity in its wake. Despite appearances, the $L_2$ norm
+of the red and black curves in the figure are identical.
+
+As you will show in homework problems, a first-order \emph{upwind}
+scheme, though monotonically decaying the $L_2$ norm, does not create
+such spurious oscillations. However, first-order upwind scheme has a
+large amount of spurious \emph{numerical diffusion}. 
+
+We can reduce the numerical diffusion by using a high-order upwind
+scheme. This will improve the solution quality, still decaying $L_2$
+norm. However, the monotonicity problems will persist. In fact, as we
+will show below, there is simply speaking \emph{no {\bf linear} scheme
+  higher than first-order that preserves monotonicity of the
+  solution}. This highly depressing statement goes by the name of
+Godunov's theorem and has caused untold amount of problems in
+contructing ``good schemes'' for advective equations (which includes
+all hyperbolic PDEs). Godunov's theorem forces us to look for
+\emph{non-linear} schemes, leading to the concept of \emph{limiters},
+that are of central importance in our ability to simulate flows with
+shocks and sharp features.
+
+\begin{proposition}[Godunov's Theorem]
+  There are no linear, higher than first-order upwind schemes that
+  preserve monotonicity of the solution to the linear advection
+  equation, and hence, for the solution of any hyperbolic PDE.
+\end{proposition}
+\begin{proof}
+  Consider a fully-discrete, general scheme for advection
+  equation
+  \begin{align*}
+    f_j^{n+1} = \sum_k c_k f_{j+k}^n.
+  \end{align*}
+  The discrete slope then is
+  \begin{align*}
+    f_{j+1}^{n+1} - f_j^{n+1} = \sum_k c_k \left( f_{j+k+1}^n - f_{j+k}^n \right).
+  \end{align*}
+  Assume that all $f_{j+1}^n - f_j^n > 0$. To maintain monotonicity at
+  next time-step hence one must have all $c_k \ge 0$. The \emph{only}
+  scheme that satifies this condition is the first-order upwind
+  scheme:
+  \begin{align*}
+    f_j^{n+1} 
+    =
+    f_j^n -\frac{\Delta t}{\Delta x}(f_j^n - f_{j-1}^n)
+    =
+    \left( 
+    1 -\frac{\Delta t}{\Delta x}
+    \right) f_j^n
+    + f_{j-1}^n.
+  \end{align*}
+  This satisfies monotonicity as long as ${\Delta t}/{\Delta x} \le
+  1$. Any other scheme, including the second-order central difference
+  scheme,
+  \begin{align*}
+    f_j^{n+1} = f_j^n -\frac{\Delta t}{2 \Delta x}(f_{j+1}^n - f_{j-1}^n)
+  \end{align*}  
+  will have \emph{at least one} $c_k < 0$ indepedent of the time-step,
+  hence showing that they it not preserve monotonicity.
+\end{proof}
 
 \end{document}
 

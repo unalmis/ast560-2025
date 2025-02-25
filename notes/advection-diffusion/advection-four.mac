@@ -29,9 +29,11 @@ g(x,t) := sum(
   sqrt(%pi/a)*exp(-%pi^2*k(j)^2/a^2)*exp(-%i*w(j)*t)*exp(%i*k(j)*x),
   j, 1, jmax)$
 
-wxplot2d([0.1+realpart(g(x,0)), 0.1+realpart(g(x,1))], [x,-L/2,L/2],
+plot2d([0.1+realpart(g(x,0)), 0.1+realpart(g(x,1))], [x,-L/2,L/2],
   [style, [lines, 2, red], [lines, 2, black]],
-  [legend, "Exact", "Numerical"]
+  [legend, "Exact", "Central-Diff"],
+  [pdf_file, "a560-adv-1d-cd.pdf"],
+  [gnuplot_pdf_term_command, "set term pdfcairo color solid lw 3 size 17.2 cm, 12.9 cm font \",24\""]  
   )$
 
 l20 : float(integrate(realpart(g(x,0))^2, x, -L/2, L/2))$
