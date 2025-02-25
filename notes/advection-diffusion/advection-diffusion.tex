@@ -385,13 +385,15 @@ fruitful or productive to treat a numerical method as a black-box. The
 deeper one understand the numerics, the better one can be confident in
 obtaining useful results from them.
 
-\section{Constructing Finite-Difference Formulas}
+\section{Constructing and Analyzing Finite-Difference Formulas}
 
 In the advection-diffusion equation we have first-order and
 second-order derivative operators. We will use
 \emph{finite-differences} to compute these, however, accounting for
 some form of \emph{upwinding} for the advection term that we explain
 below.
+
+\subsection{Lagrange interpolating polynomials}
 
 Finite-difference (FD) approximations can be systematically
 constructed by constructing \emph{interpolating polynomials} given
@@ -456,6 +458,8 @@ a pathological manner. One way around this ``ringing'' is to use a
 \emph{non-uniformly} spaced sets of points, for example, Legendre or
 Chebyshev points. See Fig.\thinspace\ref{fig:patho-fits}.
 
+\subsection{Constructing Difference Approximations}
+
 Once we have the interpolation polynomial we can use it to approximate
 the values and derivatives we need at various places in the
 algorithm. For example, at some arbitrary point $x$ we can approximate
@@ -509,6 +513,8 @@ to get
   f^- &= \frac{1}{8} ( 3 f_{L} + 6 f_0 - f_R ).
 \end{align}
 \end{subequations}
+
+\subsection{Taylor-series analysis}
 
 For a smooth $f(x)$ the accuracy of the interpolating polynomial at
 some point $x$ will depend on the size of the \emph{stencil}, that is,
@@ -589,6 +595,8 @@ packages, especially for fluid mechanics\footnote{Solid mechanics and
 typically use low-order schemes, sometimes even effectively just
 first-order schemes.
 
+\subsection{Fourier analysis}
+
 \begin{figure}
   \setkeys{Gin}{width=0.45\linewidth,keepaspectratio}
   \incfig{a560-kbar-diff1.pdf} 
@@ -632,16 +640,18 @@ Hence, the discrete scheme ``sees'' a \emph{modified wave-number}
 $\bar{k}$ rather than the exact wave-number $k$. In general, the
 modified wave-number will have both a real and an imaginary
 part. However, due to the symmetry of the central-difference formula,
-$\bar{k}$ only has a real-part. The left panel of
-Fig.\thinspace\ref{fig:num-disp} compares the numerical dispersion
-with the exact dispersion.  Notice there is strong deviation from the
-exact dispersion for even modest waves numbers. This figure also shows
-strong \emph{aliasing} of modes: each long wavelength mode is
-\emph{aliased} to a corresponding short wavelength mode. Further, this
-figure also shows that if we were to use the central-difference
-formula for advection, modes with different wave-numbers would
-propagate with different phase- and group velocities, causing
-\emph{dispersion} of waves.
+$\bar{k}$ only has a real-part. This means that the mode propagates
+\emph{without any damping}. 
+
+The left panel of Fig.\thinspace\ref{fig:num-disp} compares the
+numerical dispersion with the exact dispersion.  Notice there is
+strong deviation from the exact dispersion for even modest waves
+numbers. This figure also shows strong \emph{aliasing} of modes: each
+long wavelength mode is \emph{aliased} to a corresponding short
+wavelength mode. Further, this figure also shows that if we were to
+use the central-difference formula for advection, modes with different
+wave-numbers would propagate with different phase- and group
+velocities, causing \emph{dispersion} of waves.
 
 Now consider a constant-coefficient diffusion equation
 \begin{align}
@@ -664,10 +674,70 @@ be damped as $e^{-\alpha \bar{k}^2 t}$ where
 \begin{align}
   \bar{k}^2\Delta x^2 = 2 - 2 \cos(k \Delta x).
 \end{align}
-Recall that the actual damping should be $e^{-\alpha k^2} t$. Hence,
+Recall that the actual damping should be $e^{-\alpha k^2 t}$. Hence,
 as we see in the right-panel of Fig.\thinspace\ref{fig:num-disp} the
 high-$k$ modes will be \emph{under-damped} by this central difference
 scheme.
+
+\subsection{Discrete $L_2$ conservation for 1D advection}
+
+The Fourier analysis of the semi-discrete 1D diffusion equation with
+central differences shows that there is no damping of modes. This
+indicates that the central difference scheme for advection (without
+any diffusion) \emph{conserves} the $L_2$ norm. To see this
+explicitly, consider the semi-discrete scheme in cell $i$:
+\begin{align}
+  \frac{d f_i}{dt}
+  +
+  \frac{f_{i+1} - f_{i-1}}{2 \Delta x}
+  = 0
+\end{align}
+where we assumed $u=1$ without any loss of generality. Here, let
+$i=1,\ldots, N$. Now, multiply by $f_i$ and sum over all cells to get
+\begin{align}
+  \frac{d}{dt}  \sum_{i=1}^N \frac{1}{2} f_i^2
+  +
+  \frac{1}{2\Delta x}\sum_{i=1}^N f_i (f_{i+1} - f_{i-1})
+  = 0.
+\end{align}
+To proceed, we will perform a \emph{discrete summation-by parts}, or
+\emph{index-shifting}. This is analogous to integration by
+parts. Write
+\begin{align}
+  \sum_{i=1}^N f_i f_{i+1}
+  =
+  \sum_{j=2}^{N+1} f_{j-1} f_j
+  =
+  \sum_{j=1}^{N} f_{j-1} f_j
+  +
+  \underbrace{
+  (f_N f_{N+1} - f_0 f_1)
+  }_{
+  \mathrm{Boundary-terms}
+  }.
+\end{align}
+Here we replaced the dummy index $i$ by $j = i+1$, and introduced the
+\emph{boundary terms}. Hence, substituting this in the semi-discrete
+scheme, and replacing the dummy index $j$ by $i$, we get
+\begin{align}
+  \frac{d}{dt}  \sum_{i=1}^N \frac{1}{2} f_i^2
+  +
+  \frac{f_N f_{N+1} - f_0 f_1}{2\Delta x}
+  = 0.
+\end{align}
+Notice that the discrete spatial term has cancelled, except for the
+boundary terms. Hence, we see that the $L_2$ norm of the solution only
+changes due to boundary terms, and hence $L_2$ is
+\emph{conserved}\footnote{If we used periodic boundary conditions,
+  then $f_0 = f_N$ and $f_{N+1} = f_1$. With this, the boundary terms
+  cancel.}.
+
+Notice that we have not said anything about the time-derivative term
+in this analysis: this proof of $L_2$ conservation only holds in the
+\emph{time-continuous} limit of the scheme. Depending on the time
+integrator we choose the $L_2$ for the \emph{fully discrete} scheme
+may actually \emph{decay} (for example, with strong-stability
+preserving Runge-Kutta schemes described below).
 
 \end{document}
 
