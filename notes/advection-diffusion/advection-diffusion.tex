@@ -57,6 +57,7 @@
 \newcommand{\eqr}[1]{Eq.\thinspace(#1)}
 \newcommand{\pfrac}[2]{\frac{\partial #1}{\partial #2}}
 \newcommand{\pfracc}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+\newcommand{\pfraccc}[1]{\frac{\partial^2 }{\partial #1^2}}
 \newcommand{\pfraca}[1]{\frac{\partial}{\partial #1}}
 \newcommand{\pfracb}[2]{\partial #1/\partial #2}
 \newcommand{\pfracbb}[2]{\partial^2 #1/\partial #2^2}
@@ -285,7 +286,7 @@ properties as otherwise the numerical algorithm is no longer
 
 
 
-\begin{wrapfigure}[12]{L}{0.25\textwidth}
+\begin{wrapfigure}[13]{L}{0.25\textwidth}
   \incfig{positive-cube.png} 
   \caption{A small, cubical volume with outflow from all sides. If
     $f_0>0$ then then $f$ can only decay towards zero, showing
@@ -458,7 +459,7 @@ a pathological manner. One way around this ``ringing'' is to use a
 \emph{non-uniformly} spaced sets of points, for example, Legendre or
 Chebyshev points. See Fig.\thinspace\ref{fig:patho-fits}.
 
-\subsection{Constructing Difference Approximations}
+\subsection{Constructing difference approximations}
 
 Once we have the interpolation polynomial we can use it to approximate
 the values and derivatives we need at various places in the
@@ -778,11 +779,11 @@ all hyperbolic PDEs). Godunov's theorem forces us to look for
 that are of central importance in our ability to simulate flows with
 shocks and sharp features.
 
-\begin{proposition}[Godunov's Theorem]
+\begin{theorem}[Godunov's Theorem]
   There are no linear, higher than first-order upwind schemes that
   preserve monotonicity of the solution to the linear advection
   equation, and hence, for the solution of any hyperbolic PDE.
-\end{proposition}
+\end{theorem}
 \begin{proof}
   Consider a fully-discrete, general scheme for advection
   equation
@@ -816,6 +817,197 @@ shocks and sharp features.
   will have \emph{at least one} $c_k < 0$ indepedent of the time-step,
   hence showing that they it not preserve monotonicity.
 \end{proof}
+
+\section{Spatial Discretization of the Advection-Diffusion Equation}
+
+We are now finally ready to write down the spatial discretization of
+the advection-diffusion equation. We will do this on a rectangular
+grid for the 2D equation
+\begin{align}
+  \pfrac{f}{t}
+  +
+  \pfraca{x}(u_x f)
+  +
+  \pfraca{y} (u_y f)
+  =
+  \pfraccc{x}(\alpha f)
+  +
+  \pfraccc{y}(\alpha f).
+\end{align}
+
+\begin{figure}
+  \setkeys{Gin}{width=0.45\linewidth,keepaspectratio}
+  \incfig{stencil-ad-2d.png} 
+  \incfig{stencil-ad-flux-2d.png}
+  \caption{Stencils for spatial discretization of 2D
+    advection-diffusion equations. We locate $f$ at cell-centers,
+    $u_x$ on the middle of the vertical edges, and $u_y$ at the middle
+    of the horizontal edges. The diffusion coefficient $\alpha$ is
+    located at the middle of each edge. The right-panel shows the
+    spatial stencil written in terms of the advective and diffusive
+    \emph{fluxes} instead.}
+  \label{fig:stencil-ad-2d}
+\end{figure}
+
+We will discretize the equation on the ``stencil'' shown in the
+figure: $f$ is located at cell-centers, and $u_x$ and $u_y$ along the
+vertical and horizontal faces respectively. Note that this choice of
+location of the velocity ensures we know the \emph{normal} component
+of the velocity at each face. The diffusion coefficient are located at
+the middle of each faces. See left-panel of
+Fig.\thinspace\ref{fig:stencil-ad-2d}.
+
+We will write the scheme in \emph{semi-discrete} form (as we will not
+discretize the time derivative yet), as follows
+\begin{align}
+  \frac{df_0}{dt}
+  +
+  \frac{G_x^R -G_x^L}{\Delta x}
+  +
+  \frac{G_y^T -G_y^B}{\Delta y}
+  =
+  \frac{H_x^R - H_x^L}{\Delta x}
+  +
+  \frac{H_y^T - H_y^B}{\Delta y}
+\end{align}
+where $G^{R,L}_{x,y}$ are \emph{advective fluxes} and $H^{R,L}_{x,y}$
+are \emph{diffusive fluxes}. This stencil, written in terms of
+\emph{fluxes} allows us to split the choice of fluxes into a seperate
+step, allowing flexibility in constructing different schemes by
+choosing different forms of the fluxes. See right-panel of
+Fig.\thinspace\ref{fig:stencil-ad-2d}.
+
+A simple, but natural choice for the fluxes are as follows.For the
+advective flux we will use
+\begin{align}
+  G_x^L &= \frac{u_x^L}{2} (f_0 + f_L) \\
+  G_y^B &= \frac{u_y^B}{2} (f_0 + f_B)
+\end{align}
+with analogous formulas for the advective fluxes on the other two
+faces.  This simple \emph{averaging}, as is easy to see, is the
+second-order, central-difference scheme for the advection terms
+
+For the diffusive flux we will use
+\begin{align}
+  H_x^L &= \alpha_L\frac{f_0 - f_L}{\Delta x} \\
+  H_y^B &= \alpha_B \frac{f_0 - f_B}{\Delta y}
+\end{align}
+This centered difference approximation the diffusive flux, as is easy
+to see, is the second-order, central-difference scheme for the
+diffusion terms.
+
+We can make other choices for the advective and diffusive fluxes,
+leading to schemes with different properties. In particular, the use
+of centeral differences for the advection terms is particularly
+troublesome as we saw in the previous section. A better scheme would
+be to use an \emph{upwind} or \emph{upwind} biased scheme. To
+construct such a scheme, we write the advective flux as
+\begin{align}
+  G_x^L &= u_x^L f^{-}
+\end{align}
+(see left-panel Fig.\thinspace\ref{fig:stencil-ad-2d}). Of course, we
+need to still choose $f^{-}$. One way to do this is to use
+\emph{first-order upwinding}
+\begin{subequations}
+\begin{align}
+  f^{-} &= f_L, \qquad u_x^L > 0. \\
+  f^{-} &= f_R, \qquad u_x^L \le 0.
+\end{align}
+\end{subequations}
+Though this first-order upwind scheme will not produce spurious
+oscillations, it has a lot of numerical diffusion. We can, instead use
+a higher-order \emph{upwind-biased} scheme by using the formulas,
+\eqr{\ref{eq:fedge-vals}}, for the edge-values we derived
+before. Using those we get
+\begin{subequations}
+\begin{align}
+  f^- &= \frac{1}{8} ( 3 f_{0} + 6 f_L - f_{LL} ), \qquad u_x^L > 0. \\
+  f^- &= \frac{1}{8} ( 3 f_{L} + 6 f_0 - f_R ), \qquad u_x^L < 0.
+\end{align}
+\end{subequations}
+Here the value $f_{LL}$ is the value in the cell to the left to that
+of $f_L$. This higher-order scheme will still \emph{not} prevent some
+spurious oscillations (as shown by Godunov's theorem), but will
+greatly reduce the numerical diffusion, and increase the accuracy of
+the solution.
+
+\section{Strong-Stability preserving Runge-Kutta time-steppers}
+
+To update the solution in time we will use Strong-Stability preserving
+Runge-Kutta (SSP-RK) time-steppers. I will not describe how these
+schemes are derived, but suffice it to say that these are
+\emph{explicit} schemes constructed in a manner that if a
+\emph{forward-Euler} step preserves, for example, monotonicity or
+positivity, then the SSP-RK scheme preserves it also.
+
+Three steppers are described below: SSP-RK2 (second-order in time),
+SSP-RK3 and a four-stage SSP-RK3 (both third-order in time) that
+allows twice the CFL (for the cost of additional memory) as the other
+schemes. Here, the symbol $\mathcal{F}$ is used to indicate a
+first-order Euler update:
+\begin{align}
+     \mathcal{F}[f,t] = f + \Delta t \mathcal{L}[f,t]
+\end{align}
+where $\mathcal{L}[f]$ is the RHS operator from the spatial
+discretization.
+
+\begin{figure}
+  \setkeys{Gin}{width=0.45\linewidth,keepaspectratio}
+  \incfig{ssp-rk-abs-stability.png}
+  \caption{Absolute stability regions for a equation $\dot{y} =
+    (\lambda+i\omega)y$ for SSP-RK2 (red), SSP-RK3 (black) and four
+    stage SSP-RK3 (magenta). When there is no diffusion
+    ($`\lambda=0$) the SSP-RK2 scheme is slightly unstable as it
+    has no intercept on the imaginary axis. Hence, the third order
+    schemes should be preferred.}
+  \label{fig:ssp-rk-stab}
+\end{figure}
+
+\subsection*{SSP-RK2}
+
+\begin{align}
+   f^{(1)} &= \mathcal{F}[f^{n},t^n] \\
+   f^{n+1} &= \frac{1}{2} f^{n} + \frac{1}{2}\mathcal{F}[f^{(1)},t^n+\Delta t]  
+\end{align}
+with $\mathrm{CFL}\le 1$.
+
+\subsection*{Three-stage SSP-RK3}
+
+\begin{align}
+   f^{(1)} &= \mathcal{F}[f^{n},t^n] \\
+   f^{(2)} &= \frac{3}{4} f^{n} + \frac{1}{4}\mathcal{F}[f^{(1)},t^n+\Delta t ] \\
+   f^{n+1} &= \frac{1}{3} f^{n} + \frac{2}{3}\mathcal{F}[f^{(2)},t^n+\Delta t/2]  
+\end{align}
+with $\mathrm{CFL}\le 1$.
+
+\subsection*{Four-stage SSP-RK3}
+
+\begin{align}
+   f^{(1)} &= \frac{1}{2} f^{n} + \frac{1}{2} \mathcal{F}[f^{n},t^n] \\
+   f^{(2)} &= \frac{1}{2} f^{(1)} + \frac{1}{2} \mathcal{F}[f^{(1)},t^n+\Delta t/2] \\
+   f^{(3)} &= \frac{2}{3} f^{n} + \frac{1}{6} f^{(2)} + \frac{1}{6} \mathcal{F}[f^{(2)},t^n+\Delta t] \\
+   f^{n+1} &= \frac{1}{2} f^{(3)} + \frac{1}{2} \mathcal{F}[f^{(3)},t^n+\Delta t/2]
+\end{align}
+with $\mathrm{CFL}\le 2$. Note that this scheme has four stages, but
+allows twice the time-step that SSP-RK2 and SSP-RK3, hence will result
+in a speed up of :math:`1.5X` compared to the three-stage SSP-RK3
+scheme.
+
+\subsection{Region of absolute stability}
+
+For each of the above schemes, we can plot below the region of
+absolute stability. Note that only the RK3 schemes are stable when
+there is no diffusion in the system, and hence should be prefered. See
+Fig.\thinspace\ref{fig:ssp-rk-stab}. These regions are computed by
+using the simple first-order ODE
+\begin{align}
+  \dot{y} = (\lambda+i\omega)y
+\end{align}
+and using various SSP-RK schemes to discretize it. The time-step one
+chooses must lie \emph{inside} the closed regions. Note the larger
+regions of stability as more stages are added to the scheme: this is a
+general feature of RK methods, in that the stability region increases
+as we add stages.
 
 \end{document}
 
