@@ -1,0 +1,38 @@
+kill(all)$
+
+L : 1$
+N : 128$
+dx : L/N$
+jmax : 2$
+
+k(j) := 2*%pi*j/L$
+w(j) := sin(k(j)*dx)/dx$
+
+f(x,t) := sum(
+  exp(%i*k(j)*x)*exp(-%i*w(j)*t),
+  j, 1, jmax
+  )$
+
+/** Plot initial conditions */
+wxplot2d([realpart(f(x,0)), realpart(f(x,1))], [x,0,L],
+  [style, [lines, 2, red], [lines, 2, black]],
+  [legend, "Exact", "Numerical"]
+  )$
+
+L : 1$
+N : 64$
+dx : L/N$
+jmax : 10$
+
+a : 100$
+g(x,t) := sum(
+  sqrt(%pi/a)*exp(-%pi^2*k(j)^2/a^2)*exp(-%i*w(j)*t)*exp(%i*k(j)*x),
+  j, 1, jmax)$
+
+wxplot2d([0.1+realpart(g(x,0)), 0.1+realpart(g(x,1))], [x,-L/2,L/2],
+  [style, [lines, 2, red], [lines, 2, black]],
+  [legend, "Exact", "Numerical"]
+  )$
+
+l20 : float(integrate(realpart(g(x,0))^2, x, -L/2, L/2))$
+l21 : float(integrate(realpart(g(x,1))^2, x, -L/2, L/2))$
