@@ -432,17 +432,21 @@ required. Hence, this quadratic polynomial is the interpolation
 polynomial we are seeking. Of course, the generalization to more
 points is obvious.
 
-\begin{wrapfigure}{L}{0.4\textwidth}
-\incfig{badfits.pdf} 
-\caption{Pathological interpolation of a smooth function on uniformly
-  spaced set of nodes. Black line is the interpolation polynomial that
-  shows severe oscillations, despite the function (red line) being
-  smooth.}
-\label{fig:badfits}
-\end{wrapfigure}
+\begin{figure}
+  \setkeys{Gin}{width=0.45\linewidth,keepaspectratio}
+  \incfig{a560-patho-interp.pdf} 
+  \incfig{a560-patho-cheb.pdf}
+  \caption{Left: Interpolation of a smooth function on uniformly
+    spaced set of nodes. Black line is the interpolation polynomial
+    that shows severe oscillations, despite the function (red line)
+    being smooth. Right: The same, except using Chebyshev
+    interpolation points. Using these significantly improves the
+    quality of the interpolation.}
+  \label{fig:patho-fits}
+\end{figure}
 
 Interpolation on uniformly spaced points can often give highly
-inaccurate results. For example, conisder the function
+inaccurate results. For example, consider the function
 \begin{align}
   f(x) = \frac{1}{1+ 10 x^2}
 \end{align}
@@ -450,7 +454,7 @@ on $x \in [-1,1]$, This function is smooth but when an interpolating
 polynomial is constructed using uniformly spaced points it behaves in
 a pathological manner. One way around this ``ringing'' is to use a
 \emph{non-uniformly} spaced sets of points, for example, Legendre or
-Chebyshev points.
+Chebyshev points. See Fig.\thinspace\ref{fig:patho-fits}.
 
 Once we have the interpolation polynomial we can use it to approximate
 the values and derivatives we need at various places in the
@@ -585,6 +589,21 @@ packages, especially for fluid mechanics\footnote{Solid mechanics and
 typically use low-order schemes, sometimes even effectively just
 first-order schemes.
 
+\begin{figure}
+  \setkeys{Gin}{width=0.45\linewidth,keepaspectratio}
+  \incfig{a560-kbar-diff1.pdf} 
+  \incfig{a560-kbar-diff2.pdf} 
+  \caption{Left: Numerical dispersion relation (blue) plotted as a
+    function of wave-number for central difference scheme for the
+    constant advection. Significant dispersion and aliasing of modes
+    is seen. Right: Damping of wave-number $k$ for the
+    constant-coefficient diffusion equation. High-$k$ modes are
+    \emph{under-damped}. Red curves are the exact dispersion
+    relations.}
+  \label{fig:num-disp}
+\end{figure}
+
+
 Besides Taylor series analysis, we can also do a Fourier analysis to
 understand how a single mode is represented by the finite-difference
 formula for the derivative operators. To do this we will take a single
@@ -593,56 +612,63 @@ Fourier mode
   f(x) = e^{ikx}
 \end{align}
 and substitute this in the finite-difference formula. For, example,
-for the first derivative we have
+consider the linear advection equation
 \begin{align}
-  \pfrac{f_h}{x}
+  \pfrac{f}{t} + u \pfrac{f}{x} = 0.
+\end{align}
+with its semi-discrete form
+\begin{align}
+  \pfrac{f_h}{t} + u \frac{f_R - f_L}{2 \Delta x} = 0.
+\end{align}
+Using the Fourier expansion $f_h(x) = e^{-i\omega t} e^{ikx}$ we get
+\begin{align}
+  -i\omega + u \frac{e^{ik \Delta x } - e^{-ik \Delta x } }{2 \Delta x} = 0
+\end{align}
+This gives a numerical dispersion relation
+\begin{align}
+  \omega \Delta x  =  u \bar{k} \Delta x = u \sin(k\Delta x).
+\end{align}
+Hence, the discrete scheme ``sees'' a \emph{modified wave-number}
+$\bar{k}$ rather than the exact wave-number $k$. In general, the
+modified wave-number will have both a real and an imaginary
+part. However, due to the symmetry of the central-difference formula,
+$\bar{k}$ only has a real-part. The left panel of
+Fig.\thinspace\ref{fig:num-disp} compares the numerical dispersion
+with the exact dispersion.  Notice there is strong deviation from the
+exact dispersion for even modest waves numbers. This figure also shows
+strong \emph{aliasing} of modes: each long wavelength mode is
+\emph{aliased} to a corresponding short wavelength mode. Further, this
+figure also shows that if we were to use the central-difference
+formula for advection, modes with different wave-numbers would
+propagate with different phase- and group velocities, causing
+\emph{dispersion} of waves.
+
+Now consider a constant-coefficient diffusion equation
+\begin{align}
+  \pfrac{f}{t} = \alpha \pfracc{f}{x}
+\end{align}
+with its semi-discrete form
+\begin{align}
+  \pfrac{f_h}{t} = \alpha \frac{f_R - 2 f_0 + f_L}{\Delta x^2}.
+\end{align}
+In a similar manner as above we can do a Fourier analysis assuming a
+central-difference formula for the second derivative. Again using
+$f_h(x) = e^{-i\omega t} e^{ikx}$ we will get the dispersion relation
+\begin{align}
+  -i\omega
   =
-  i\bar{k} = \frac{e^{ik \Delta x } - e^{-ik \Delta x } }{2 \Delta x}.
+  \alpha \frac{e^{ik \Delta x } - 2 + e^{-ik \Delta x } }{\Delta x^2}.
 \end{align}
-Note that we have used a \emph{modified wave-number} $\bar{k}$ on the
-left as this is what the scheme will actually see, rather than the
-exact wave-number $k$. In general, the modified wave-number will have
-both a real and an imaginary part. In this specific example, as the
-stencil is symmetric $\bar{k}$ only has a real part. We easily see
-that this is
-\begin{align}
-  \bar{k}_R\Delta x = \sin(k\Delta x).
-\end{align}
-
-\begin{wrapfigure}{L}{0.4\textwidth}
-\incfig{kbarp.pdf} 
-\caption{Blue: Numerical wave-number plotted as a function of actual
-  wave-number for central difference scheme for the first
-  derivative. Significant dispersion and aliasing is seen.}
-\label{fig:badfits}
-\end{wrapfigure}
-
-The figure shows the numerical wave-number $\bar{k}_R$ plotted against
-the actual wave-number. Notice there is strong deviation from the red
-line for even modest waves. This figure shows strong \emph{aliasing}
-of modes: each long wavelength mode is \emph{aliased} to a
-corresponding short wavelength mode. Further, this figure also shows
-that if we were to use the central-difference formula for advection,
-modes with different wave-numbers would propagate with different
-phase- and group velocities, causing \emph{dispersion} of waves.
-
-In a similar manner we can do a Fourier analysis of the
-finite-difference formula for the second derivative. This time we will
-get
-\begin{align}
-  \frac{\partial ^2f_h}{\partial x^2}
-  =
-  -\bar{k}^2 = \frac{e^{ik \Delta x } - 2 + e^{-ik \Delta x } }{\Delta x^2}.
-\end{align}
-The RHS has only a real part, which we can compute as
+This dispersion relation shows that a mode with wave-number $k$ will
+be damped as $e^{-\alpha \bar{k}^2 t}$ where
 \begin{align}
   \bar{k}^2\Delta x^2 = 2 - 2 \cos(k \Delta x).
 \end{align}
-
-What does this show? If we were to evolve a diffusion equation with
-the central difference formula the scheme would instead damp a mode
-with $-\bar{k}^2$ instead of $-k^2$. Hence, the numerical scheme will
-damp a mode with a \emph{modified} diffusion coefficient
+Recall that the actual damping should be $e^{-\alpha k^2} t$. Hence,
+as we see in the right-panel of Fig.\thinspace\ref{fig:num-disp} the
+high-$k$ modes will be \emph{under-damped} by this central difference
+scheme.
 
 \end{document}
+
 

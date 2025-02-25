@@ -31,18 +31,20 @@ slist : [f0 = subst(x=0,fur(x)), fR = subst(x=dx,fur(x)), fL = subst(x=-dx,fur(x
 fDiff1 : subst(slist, diff1), expand$
 fDiff2 : subst(slist, diff2), expand$
 
-kbar : fDiff1$
-kbar1 : subst(dx=1, realpart(kbar/%i))$
+kbar1 : subst(dx=1, realpart(fDiff1/%i))$
 plot2d([k, kbar1], [k,0,%pi], grid2d,
-  [style, lines, lines],
-  [style, [lines, 2, red], [lines, 2, blue]]
+  [style, [lines, 2, red], [lines, 2, blue]],
+  [xlabel, "k dx"],
+  [pdf_file, "a560-kbar-diff1.pdf"],
+  [gnuplot_pdf_term_command, "set term pdfcairo color solid lw 3 size 17.2 cm, 12.9 cm font \",24\""]  
   )$
 
-kbar : fDiff2$
-kbar1 : subst(dx=1, realpart(kbar))$
-plot2d([0, kbar1], [k,0,%pi], grid2d,
-  [style, lines, lines],
-  [style, [lines, 2, red], [lines, 2, blue]]
+kbar2 : subst(dx=1, realpart(fDiff2))$
+plot2d([k^2, -kbar2], [k,0,%pi], grid2d,
+  [style, [lines, 2, red], [lines, 2, blue]],
+  [xlabel, "k dx"],
+  [pdf_file, "a560-kbar-diff2.pdf"],
+  [gnuplot_pdf_term_command, "set term pdfcairo color solid lw 3 size 17.2 cm, 12.9 cm font \",24\""]  
   )$
 
 /** Patholigical interpolation using uniform points */
@@ -59,21 +61,26 @@ gcn : lagrange(pcn, varname='x), expand$
 
 /* Uniform */
 plot2d([[discrete, pn], g, gn], [x,-1,1],
-  [style, points, lines, lines],
+  [style, points, [lines, 2, red], [lines, 2, black]],
   [legend, "Nodal", "Exact", "Interp"],
-  [color, blue, red, black]
+  [pdf_file, "a560-patho-interp.pdf"],
+  [gnuplot_pdf_term_command, "set term pdfcairo color solid lw 3 size 17.2 cm, 12.9 cm font \",24\""]
   )$
 
 /* Cheb */
 plot2d([[discrete, pcn], g, gcn], [x,-1,1],
-  [style, points, lines, lines],
+  [style, points, [lines, 2, red], [lines, 2, black]],
   [legend, "Nodal", "Exact", "Cheb"],
-  [color, blue, red, black]
+  [color, blue, red, black],
+  [pdf_file, "a560-patho-cheb.pdf"],
+  [gnuplot_pdf_term_command, "set term pdfcairo color solid lw 3 size 17.2 cm, 12.9 cm font \",24\""]  
   )$
 
 /* Cheb diff */
 plot2d([diff(g(x),x), diff(gcn,x)], [x,-1,1],
   [style, lines, lines],
   [legend, "Exact", "Cheb"],
-  [color, blue, red]
+  [color, blue, red],
+  [pdf_file, "a560-patho-cheb.pdf"],
+  [gnuplot_pdf_term_command, "set term pdfcairo color solid lw 3 size 17.2 cm, 12.9 cm font \",24\""]    
   )$
