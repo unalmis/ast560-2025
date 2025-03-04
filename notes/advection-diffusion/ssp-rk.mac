@@ -1,0 +1,44 @@
+kill(all)$
+
+load("draw")$
+set_plot_option ([gnuplot_preamble, "set size ratio -1"])$
+
+declare(w,real)$
+declare(l,real)$
+declare(fn,real)$
+
+F(f) := (1 + dt*(-%i*w + l))*f$
+
+/** SSP-RK2 */
+f1 : F(fn)$
+fn1 : 1/2*fn + 1/2*F(f1)$
+
+R : subst(dt=1, expand(fn1/fn))$
+A2 : cabs(R) - 1$
+
+contour_plot(A2, [l,-2,0], [w,-2,2],
+  [gnuplot_preamble, "set cntrparam levels discrete 0"],
+  [pdf_file, "a560-ssp-rk2.pdf"],
+  [xlabel, "lambda dt"],
+  [ylabel, "omega dt"],
+  [gnuplot_pdf_term_command, "set term pdfcairo color solid lw 3 size 17.2 cm, 12.9 cm font \",24\""] 
+  )$ 
+
+/** SSP-RK2 3 stages */
+f1 : F(fn)$
+f2 : 3/4*fn + 1/4*F(f1)$
+fn1 : 1/3*fn + 2/3*F(f2)$
+
+R : subst(dt=1, expand(fn1/fn))$
+A33 : cabs(R) - 1$
+
+contour_plot(A33, [l,-5,1], [w,-4,4],
+  [gnuplot_preamble, "set cntrparam levels discrete 0"],
+  [style, [lines, 2, red]],  
+  [pdf_file, "a560-ssp-rk3.pdf"],
+  [xlabel, "lambda dt"],
+  [ylabel, "omega dt"],
+  [gnuplot_pdf_term_command, "set term pdfcairo color solid lw 3 size 17.2 cm, 12.9 cm font \",24\""] 
+  )$
+
+
