@@ -1,0 +1,33 @@
+kill(all)$
+
+load("interpol")$
+load("draw")$
+
+/** Patholigical interpolation using uniform points */
+g(x) := exp(x)/sqrt(1 + 9*x^2)$
+N : 11$
+dx : 2/(N-1)$
+xn : makelist(-1+dx*i, i, 0, N-1)$
+pn : makelist([xn[i], g(xn[i])], i, 1, N)$
+gn : lagrange(pn, varname='x), expand$
+
+xcn : makelist(cos(i*%pi/(N+1)), i, 0, N+1)$
+pcn : float(makelist([xcn[i], g(xcn[i])], i, 1, length(xcn)))$
+gcn : lagrange(pcn, varname='x), expand$
+
+/* Uniform */
+plot2d([[discrete, pn], g, gn], [x,-1,1],
+  [style, points, [lines, 2, red], [lines, 2, black]],
+  [legend, "Nodal", "Exact", "Interp"],
+  [pdf_file, "a560-patho-interp-a.pdf"],
+  [gnuplot_pdf_term_command, "set term pdfcairo color solid lw 3 size 17.2 cm, 12.9 cm font \",24\""]
+  )$
+
+/* Cheb */
+plot2d([[discrete, pcn], g, gcn], [x,-1,1],
+  [style, points, [lines, 2, red], [lines, 2, black]],
+  [legend, "Nodal", "Exact", "Cheb"],
+  [color, blue, red, black],
+  [pdf_file, "a560-patho-cheb-a.pdf"],
+  [gnuplot_pdf_term_command, "set term pdfcairo color solid lw 3 size 17.2 cm, 12.9 cm font \",24\""]  
+  )$

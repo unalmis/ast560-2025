@@ -877,7 +877,7 @@ step, allowing flexibility in constructing different schemes by
 choosing different forms of the fluxes. See right-panel of
 Fig.\thinspace\ref{fig:stencil-ad-2d}.
 
-A simple, but natural choice for the fluxes are as follows.For the
+A simple, but natural choice for the fluxes are as follows. For the
 advective flux we will use
 \begin{align}
   G_x^L &= \frac{u_x^L}{2} (f_0 + f_L) \\
@@ -911,7 +911,7 @@ need to still choose $f^{-}$. One way to do this is to use
 \begin{subequations}
 \begin{align}
   f^{-} &= f_L, \qquad u_x^L > 0. \\
-  f^{-} &= f_R, \qquad u_x^L \le 0.
+  f^{-} &= f_0, \qquad u_x^L \le 0.
 \end{align}
 \end{subequations}
 Though this first-order upwind scheme will not produce spurious
@@ -951,18 +951,6 @@ first-order Euler update:
 where $\mathcal{L}[f]$ is the RHS operator from the spatial
 discretization.
 
-\begin{figure}
-  \setkeys{Gin}{width=0.45\linewidth,keepaspectratio}
-  \incfig{ssp-rk-abs-stability.png}
-  \caption{Absolute stability regions for a equation $\dot{y} =
-    (\lambda+i\omega)y$ for SSP-RK2 (red), SSP-RK3 (black) and four
-    stage SSP-RK3 (magenta). When there is no diffusion
-    ($`\lambda=0$) the SSP-RK2 scheme is slightly unstable as it
-    has no intercept on the imaginary axis. Hence, the third order
-    schemes should be preferred.}
-  \label{fig:ssp-rk-stab}
-\end{figure}
-
 \subsection*{SSP-RK2}
 
 \begin{align}
@@ -995,19 +983,104 @@ scheme.
 
 \subsection{Region of absolute stability}
 
-For each of the above schemes, we can plot below the region of
-absolute stability. Note that only the RK3 schemes are stable when
-there is no diffusion in the system, and hence should be prefered. See
-Fig.\thinspace\ref{fig:ssp-rk-stab}. These regions are computed by
-using the simple first-order ODE
+\begin{figure}
+  \setkeys{Gin}{width=0.45\linewidth,keepaspectratio}
+  \incfig{ssp-rk-abs-stability.png}
+  \caption{Absolute stability regions for a ODE
+    $\dot{f} = (\lambda-i\omega)f$ for forward-Euler (blue), SSP-RK2
+    (red), SSP-RK3 (black) and four stage SSP-RK3 (magenta). When
+    there is no diffusion ($\lambda=0$) the SSP-RK2 scheme is slightly
+    unstable as it has no intercept on the imaginary axis. Hence, the
+    third order schemes should be preferred.}
+  \label{fig:ssp-rk-stab}
+\end{figure}
+
+For any ODE solver, like the SSP-RK schemes presented above, one can
+compute \emph{regions of stability}, that is, the bounds on time-step
+to ensure the solution does not ``blow up''. To do this, we consider
+the simple first-order ODE
 \begin{align}
-  \dot{y} = (\lambda+i\omega)y
+  \dot{f} = (\lambda-i\omega) f.
 \end{align}
-and using various SSP-RK schemes to discretize it. The time-step one
-chooses must lie \emph{inside} the closed regions. Note the larger
-regions of stability as more stages are added to the scheme: this is a
-general feature of RK methods, in that the stability region increases
-as we add stages.
+Of course, the exact solution to this is simply a damped oscillation,
+$f = f_0 e^{\lambda t} e^{-i\omega t}$. Clearly, we must restrict
+$\lambda \le 0$ to ensure the solutions are not growing.
+
+Consider first the forward-Euler scheme:
+\begin{align}
+  f^{n+1} = \mathcal{F}[f^n,t] 
+  = \left[ 1 + (\lambda-i\omega)\Delta t  \right] f^n.
+\end{align}
+For the numerical solution to not grow we must ensure that
+\begin{align}
+  \left| \frac{f^{n+1}}{f^n} \right| \le 1.
+\end{align}
+For the forward-Euler scheme we get
+\begin{align}
+  \left| \frac{f^{n+1}}{f^n} \right|
+  =
+  \sqrt{
+  (1+\lambda\Delta t)^2 + \omega^2\Delta t^2}
+  \le 1.
+\end{align}
+Hence, the \emph{region of stability} is a unit circle in the
+$(\omega\Delta t, \lambda \Delta t)$ plane centered around
+$\lambda\Delta t = -1$. In the special case $\lambda = 0$, that is,
+when we have no damping at all, this shows that for stability we need
+to ensure $\sqrt{1+\omega^2 \Delta t^2} \le 1$ which is impossible for
+any $\omega \ne 0$. Hence, the forward-Euler scheme is
+\emph{unconditionally unstable}.
+
+However, even though the forward-Euler scheme is unconditionally
+unstable, we can use it as a building block for \emph{conditionally
+  stable} schemes. In fact, each of the SSP-RK schemes above are built
+by combining forward-Euler steps and all conditionally
+stable. Figure\thinspace\ref{fig:ssp-rk-stab} shows the region of
+stabilty for each of the SSP-RK schemes (and the forward-Euler scheme)
+listed above. For stability, we must ensure that, for a given $\omega$
+and $\lambda$, we remain inside the region enclosed by the
+corresponding contour.
+
+Notice from Fig.\thinspace\ref{fig:ssp-rk-stab} that the region of
+stability increases as more stages are added to the scheme. Further,
+also notice that the region increases more rapidly along the
+$\lambda \Delta t$ axis, indicating that adding additional stages
+increases the maximum allows stable time-step for damping faster
+than it does for oscillations.
+
+Consider a 1D advection-diffusion equation with constant advection
+speed and diffusion coefficient
+\begin{align}
+  \pfrac{f}{t} + u\pfrac{f}{x} = \alpha\pfracc{f}{x}
+\end{align}
+and look at a single mode $f \sim e^{ikx}$. Then this PDE turns into a
+ODE
+\begin{align}
+  \pfrac{f}{t} = (-iuk - \alpha k^2) f.
+\end{align}
+If we have used a semi-discrete scheme then if we use the ODE steppers
+listed above to advance the solution in time, we must ensure that the
+scheme remains stable with the highest-$k$ in our grid.  Let this be
+$k_{\mathrm{max}}$. In general, we will have
+$k_{\mathrm{max}} \sim 1/\Delta x$ with exact form dependent on the
+order of the spatial scheme we choose. Hence, we must have that
+$\omega \sim u/\Delta x$ and $\lambda \sim \alpha/\Delta x^2$.
+
+What this analysis shows is that as we refine the grid, the stable
+time-step due to advection will decrease linearly with cell-size, but
+due to diffusion will decrease \emph{quadratically} due to the
+diffusion. This quadratic dependence of time-step on diffusion can
+often be very restrictive, and make explicit schemes often
+prohibitively expensive. Hence, some form of \emph{implicit} methods
+must be used. We will look at one such implicit method, called
+\emph{super time-stepping} later in the course.
+
+% \section{A Note on Initializing Discretely Divergence-Free Fields}
+
+% In the above we have allowed arbitrary flow fields
+% $\mvec{u}(\mvec{x},t)$. However, many problems of interest the
+% flow-field is incompressible, for example, in incompressible
+% Navier-Stokes equations, and many kinetic problems in plasma physics.
 
 \end{document}
 

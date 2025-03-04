@@ -1,0 +1,315 @@
+\documentclass[12pt]{article}
+
+\usepackage{tikz}
+\usetikzlibrary{decorations.markings}
+
+%\usepackage{geometry}
+%\geometry{paperwidth=170mm, paperheight=240mm, left=42pt, top=40pt, textwidth=280pt, marginparsep=20pt, marginparwidth=100pt, textheight=560pt, footskip=40pt}
+
+%\documentclass[12pt]{amsart}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage{geometry}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{color}
+\usepackage{sidecap}
+\usepackage{physics}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{verse}
+\usepackage{hyperref}
+\usepackage{tensor}
+\usepackage{marginnote}
+\usepackage{wrapfig}
+\usepackage[font={small}]{caption}
+
+\newcommand{\gke}{\texttt{Gkeyll}}
+
+\newcommand{\attrib}[1]{
+\nopagebreak{\raggedleft\footnotesize #1\par}\vskip0.1in}
+\renewcommand{\poemtitlefont}{\normalfont\large\itshape\centering}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newtheorem{principle}{Principle}
+\theoremstyle{definition}
+\newtheorem{exmp}{Example}
+
+\theoremstyle{definition}
+\newtheorem{entry}{Entry}
+
+\theoremstyle{definition}
+\newtheorem{exer}{Exercise}
+\newtheorem{prob}{Problem}
+
+% auto-scaled figured
+\newcommand{\incfig}{\centering\includegraphics}
+\setkeys{Gin}{width=0.9\linewidth,keepaspectratio}
+
+% Commonly used macros
+\newcommand{\eqr}[1]{Eq.\thinspace(#1)}
+\newcommand{\pfrac}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pfracc}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+\newcommand{\pfraccc}[1]{\frac{\partial^2 }{\partial #1^2}}
+\newcommand{\pfraca}[1]{\frac{\partial}{\partial #1}}
+\newcommand{\pfracb}[2]{\partial #1/\partial #2}
+\newcommand{\pfracbb}[2]{\partial^2 #1/\partial #2^2}
+\newcommand{\spfrac}[2]{{\partial_{#1}} {#2}}
+\newcommand{\mvec}[1]{\mathbf{#1}}
+\newcommand{\bmvec}[1]{\breve{\mathbf{#1}}}
+\newcommand{\gvec}[1]{\boldsymbol{#1}}
+\newcommand{\script}[1]{\mathpzc{#1}}
+\newcommand{\gcn}{\nabla}
+\newcommand{\gcs}{\nabla_{\mvec{x}}}
+\newcommand{\gvs}{\nabla_{\mvec{v}}}
+
+\newcommand{\resetall}{\setcounter{entry}{0}\setcounter{equation}{0}\setcounter{footnote}{0}}
+
+\newcommand{\cbas}[1]{\gvec{\sigma}_{#1}}
+\newcommand{\xbas}{\gvec{\sigma}_{1}}
+\newcommand{\ybas}{\gvec{\sigma}_{2}}
+\newcommand{\zbas}{\gvec{\sigma}_{3}}
+
+\newcommand{\basis}[1]{\mvec{e}_{#1}}
+\newcommand{\bbasis}[1]{\breve{\mvec{e}}_{#1}}
+\newcommand{\dbasis}[1]{\mvec{e}^{#1}}
+\newcommand{\bdbasis}[1]{\breve{\mvec{e}}^{#1}}
+
+\newcommand{\nbasis}[1]{\hat{\mvec{e}}_{#1}}
+\newcommand{\ndbasis}[1]{\hat{\mvec{e}}^{#1}}
+
+\newcommand{\gbasis}[2]{\mvec{#1}_{#2}}
+\newcommand{\gdbasis}[2]{\mvec{#1}^{#2}}
+
+\newcommand{\veps}{\gvec{\varepsilon}}
+\newcommand{\bdum}{\breve{\_}}
+\newcommand{\vecspace}{\mathcal{V}}
+\newcommand{\tvecspace}{T_pM}
+\newcommand{\vnorm}[1]{\lVert{#1}\rVert}
+
+\newcommand{\gsel}[2]{\langle{#1}\rangle_{#2}}
+\newcommand{\gzsel}[1]{\langle {#1} \rangle}
+
+\newcommand{\uln}[1]{\underline{#1}}
+
+\newcommand{\dprod}{\mathfrak{D}}
+
+\newcommand{\dvol}{\thinspace d^3\mvec{x}}
+\newcommand{\dsurf}{\thinspace ds}
+
+% Make the items smaller
+\newcommand{\cramplist}{
+	\setlength{\itemsep}{0in}
+	\setlength{\partopsep}{0in}
+	\setlength{\topsep}{0in}}
+\newcommand{\cramp}{\setlength{\parskip}{.5\parskip}}
+\newcommand{\zapspace}{\topsep=0pt\partopsep=0pt\itemsep=0pt\parskip=0pt}
+
+\newcounter{probnum}
+\setcounter{probnum}{1}
+
+%\marginpar{\raggedleft\footnotesize Margin note}
+
+\title{Homework 1: Advection-Diffusion Equation, Finite-Difference Schemes}%
+\author{AST560 2025}%
+\date{Due: Thursday March 13th 2025}
+
+\begin{document}
+\maketitle
+
+\section*{Problem \arabic{probnum}: Anisotropic Diffusion}
+\stepcounter{probnum}
+
+Consider the advection-diffusion equation, but generalize the
+diffusion term to be \emph{anisotropic}
+\begin{align}
+  \pfrac{f}{t}
+  +
+  \gcn\cdot(\mvec{u} f)
+  =
+  \gcn\cdot(\mvec{D}\cdot \gcn f).
+  \label{eq:adv-aniso-diff}
+\end{align}
+Here $\mvec{D}$ is the second-order \emph{diffusion
+  tensor}. Anisotropic diffusion occurs in all magnetized plasmas: the
+magnetic field provides a \emph{preferred} direction, along which the
+heat flows much more easily than perpendicular to it. Assume that the
+flow is incompressible. Repeat the proof for $L_2$ conservation but
+for this system and derive the condition on the tensor $\mvec{D}$ for
+the monotonic decay of the $L_2$ norm of the solution.
+
+\section*{Problem \arabic{probnum}: $L_2$ Norm for Compressible Flow}
+\stepcounter{probnum}
+
+\begin{wrapfigure}[8]{L}{0.35\textwidth}
+\incfig{hw1-ad-ic.png} 
+\end{wrapfigure}
+The proof for $L_2$ conservation requires that the flow be
+incompressible. In this problem you will derive an explicit solution
+to a \emph{compressible} flow problem, and show that $L_2$-norm is
+indeed not conserved. Consider the 1D advection equation
+\begin{align}
+  \pfrac{f}{t} + \pfraca{x}(u f) = 0
+\end{align}
+where $u = u_L$ when $x<0$ and $u = u_R$ when $x\ge 0$. Assume both
+$u_L$ and $u_R$ are positive. Consider the initial condition (a
+rectangular pulse of height $H_L$ and width $W_L$) as shown in the
+figure. Derive the exact solution at a later time $t > 0$ when the
+pulse has completely moved to the right half of the domain. Using this
+compute the $L_2$ norms of the initial and final solutions, showing
+that the $L_2$ norm can increase \emph{or} decrease depending on the
+ratio $u_L/u_R$.
+
+\section*{Problem \arabic{probnum}: Upwind-Biased Scheme for Advection}
+\stepcounter{probnum}
+
+Consider the 1D advection equation
+\begin{align}
+\pfrac{f}{t} + \pfraca{x}(u f) = 0  
+\end{align}
+where $u > 0$ is a constant speed. Derive an \emph{upwind-biased}, 
+semi-discrete scheme for this equation. This scheme should look like
+\begin{align}
+  \frac{df_0}{dt}
+  +
+  \frac{G^R - G^L}{\Delta x}
+  =
+  0.
+\end{align}
+where $G^R$ and $G^R$ are the numerical fluxes at the right/left
+interfaces respectively. Use Fig.\thinspace[4] from the notes as a
+guidance, and the third-order edge extrapolation formulas listed in
+Section\thinspace 3.2
+
+Use a Taylor series expansion to determine the order of convergence
+for this scheme. Finally, derive the numerical dispersion relation
+using Fourier analysis, and plot the real and imaginary parts of the
+dispersion relation.
+
+\section*{Problem \arabic{probnum}: Five-Point Stencil Scheme for
+  Diffusion}
+\stepcounter{probnum}
+
+Consider the 1D diffusion equation
+\begin{align}
+\pfrac{f}{t} = \alpha \pfracc{f}{x}
+\end{align}
+where $\alpha$ is constant. We have already derived the semi-discrete
+second-order, three-point stencil scheme for this as
+\begin{align}
+  \pfrac{f_h}{t} = \alpha \frac{f_R - 2 f_0 + f_L}{\Delta x^2}.
+\end{align}
+Derive a higher-order scheme using \emph{five} values
+$f_{LL}, f_{L}, f_{0}, f_{R}, f_{RR}$ (where $LL$ and $RR$ are values
+in cells to the left of $L$ and right of $R$ respectively.
+
+Use a Taylor series expansion to determine the order of convergence
+for this scheme. Finally, derive the numerical dispersion relation
+using Fourier analysis, and plot it.
+
+\section*{Problem \arabic{probnum}: Numerical Diffusion in First-Order
+  Updwind Scheme}
+\stepcounter{probnum}
+
+Consider the semi-discrete, first-order upwind scheme for linear
+advection:
+\begin{align*}
+  \frac{df_j}{dt} + \frac{f_j^n - f_{j-1}^n}{\Delta x} = 0.
+\end{align*}
+Though this scheme preserves positivity and monotonicity, it is very
+diffusive. Rewrite this scheme as a combination of a
+centered-difference scheme for the first derivative and a
+centered-difference scheme for the second derivative. Hence,
+explicitly derive the \emph{numerical diffusion} coefficient of the
+first-order scheme.
+
+\section*{Problem \arabic{probnum}: Flux form of Semi-Discrete Scheme,
+  and Discrete $L_2$ Conservation}
+\stepcounter{probnum}
+
+We can write a generic semi-discrete scheme in the form
+\begin{align}
+  \frac{df_i}{dt} + \frac{G_{i+1/2}- G_{i-1/2} }{\Delta x} = 0
+\end{align}
+where $G_{i\pm 1/2}$ are the numerical fluxes. (See Section\thinspace
+4 where we wrote the scheme for advection-diffusion equation in this
+form). Then, the specific scheme we use (upwind, central, etc) all can
+be written by an appropriate choice of numerical fluxes. Write down
+the numerical fluxes (for example $G_{i-1/2}$) for (a) first-order
+upwind scheme for advection equation, (b) second-order central scheme
+for constant diffusion equation.
+
+To understand how $L_2$ evolves for a generic semi-discrete scheme
+written above, multiply by $f_i$ and sum over $i$, and use
+index-shifting to rewrite the second term. Use this generic form and
+the numerical fluxes for the second-order central scheme for constant
+diffusion to show that the $L_2$ norm decays, as it should.
+
+(As you showed in the previous problem that a first-order upwind
+scheme can be written as a combination of central schemes for
+advection and diffusion, this problem shows that the $L_2$ norm for
+first-order upwind for advection decays monotonically).
+
+\section*{Problem \arabic{probnum}: Stability of Implicit
+  Time-Stepping Schemes and the Simple-Harmonic Oscillator}
+\stepcounter{probnum}
+
+Consider the simple first-order ODE
+\begin{align}
+  \dot{f} = (\lambda-i\omega) f
+\end{align}
+where $\lambda \le 0$. For this we will construct two discrete
+schemes: the \emph{backward-Euler scheme}:
+\begin{align}
+  \frac{f^{n+1} - f^n}{\Delta t} 
+  =
+  (\lambda-i\omega) f^{n+1}
+\end{align}
+and the \emph{time-centered scheme} 
+\begin{align}
+  \frac{f^{n+1} - f^n}{\Delta t} 
+  =
+  (\lambda-i\omega) \frac{1}{2}(f^{n+1} + f^n).
+\end{align}
+Derive the stability properties of these schemes and show that they
+are \emph{unconditionally stable}. What is the advantage of using the
+time-centered scheme? (Hint: Consider the properties of $|f|^2$ in the
+limit $\lambda = 0$).
+
+Apply these implicit schemes to the harmonic oscillator
+\begin{align}
+  \frac{d^2z}{dt^2} = -\omega^2 z
+\end{align}
+by rewriting as a system of first-order ODEs
+\begin{align}
+  \frac{dz}{dt} = v; \quad \frac{dv}{dt} = -\omega^2 z.
+\end{align}
+Derive the exact conserved quadratic invariant for this system and
+show that the time-centered scheme conserves this invariant exactly.
+
+Introduce energy-angle coordinates:
+\begin{align}
+  \omega z = E\sin\theta; \quad v = E\cos\theta
+\end{align}
+As a challenge, derive an expression for the discrete phase-errors for
+the time-centered scheme, that is, attempt to derive a Taylor series
+expression for $\tan\theta^{n+1} = \tan(\theta^n + \omega\Delta t)$,
+and see how many terms it matches, thus deriving the phase-error.
+
+(The Boris algorithm used in particle-in-cell (PIC) codes is a
+time-centered scheme for the $\mvec{v}\times\mvec{B}$ term, and has
+structure and properties very similar to the one for the harmonic
+oscillator. Standard PIC codes use time-centering for Maxwell
+equations as well as for the particle push to allow stepping over the
+cyclotron frequency, but must resolve the plasma-frequency, and of
+course, the speed of light).
+
+\end{document}

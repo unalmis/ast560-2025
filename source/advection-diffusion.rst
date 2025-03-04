@@ -9,6 +9,15 @@ Section 1: Advection-Diffusion Equation
    This is a work in progress and I will update them as we go along in
    this part of the course.
 
+   The `homework for this part of the course
+   <./_static/hw-advection-diffusion.pdf>`_.  is posted. This is due
+   *March 13th 2025* midnight. Ideally, write the solution usig
+   LaTeX. You can simply copy the homework LaTeX files checked into
+   the `Github repo
+   <https://github.com/ammarhakim/ast560-2025/tree/main/notes/advection-diffusion>`_
+   and used that as a starting point. Freely copy the LaTex from the
+   notes at the same Github directory also.
+
 The first equation we will study in detail is the advection-diffusion
 equation. 
 
@@ -30,7 +39,3 @@ solver to evolve :math:`f(\mathbf{x},t)` in a given flow-field. We
 will use this solver to understand the properties of the discrete
 scheme and to look at some interesting flows.
 
-- **Reading for February 18th**: Sections 1, 2 and 3 through on how to
-  contruct finite-difference schemes from Lagrange interpolating
-  polynomials. Ensure you understand the steps in the Propositions
-  1-3.
