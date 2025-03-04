@@ -11,6 +11,7 @@ released under the `Creative Commons CC BY License
   :maxdepth: 1
 
   classmech  
+  historical
   background
   advection-diffusion
   kinetic-reading

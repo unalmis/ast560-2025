@@ -1,5 +1,5 @@
-Class Mechanics and Some Historical Notes
------------------------------------------
+Class Mechanics
+---------------
 
 .. contents::
 
@@ -31,6 +31,7 @@ do everything you need).
 
 Postgkyl Installation Instructions
 ++++++++++++++++++++++++++++++++++
+
 Postgkyl is a Python-based post processing tool for analyzing and visualizing 
 Gkeyll data. Instructions for installing Postgkyl on a range of platforms can be 
 found at 
@@ -74,6 +75,41 @@ enviroment::
 
   module load anaconda3/2024.2 
   conda activate pgkyl
+
+Installing the Simulation Library
++++++++++++++++++++++++++++++++++
+
+.. note::
+
+  You only need a C/C++ compiler and no other dependency to build the
+  code. C/C++ compiler suites are available on all operating
+  system. On Linux you will likely use GCC or Clang. Mac OSX comes
+  with its own suite of developer tools that you must install
+  following instruction on the Apple website. On Windows you could use
+  the Windows Subsystem for Linux (WSL). You can look up instructions
+  on how to get WSL and install a Linux distro (get Ubuntu) at
+  numerous places online.
+
+For code homework we will build on top of a stripped-down version of
+the `GkeyllZero library <https://github.com/ammarhakim/gkylzero>`_. I
+have already checked in this subset of the code we will need in the
+class Github repo. You **do not** need to clone or install GkeyllZero.
+
+To install the code needed in the simulations, fork the class repo
+and/or pull latest changes into your fork. Then, cd into the `gminus`
+directory and install the code on your machine::
+
+  cd code/gminus
+  make -j install
+
+The code should build and install install in your home directory::
+
+  ls $HOME/gkylsoft/gminus/
+
+You can run the unit tests to ensure everything has built properly by
+doing::
+
+  make check
 
 
 On use of the Maxima CAS
@@ -165,43 +201,3 @@ extensive support for General Relativity and Clifford
 Algebra. However, it can only integrate polynomials! This may appear
 very limiting, but in computational physics we typically only deal
 with polynomial expansions anyway.
-
-On Charles Baggage
-++++++++++++++++++
-
-The first and perhaps greatest pioneer in computer hardware was
-`Charles Babbage <https://en.wikipedia.org/wiki/Charles_Babbage>`_. He
-essentially, ab-inito, designed a series of mechanical computers,
-culminating in the Analytical Engine. Most of Babbage's machines were
-not built in his lifetime. However, his design for the Analytical
-Engine contains all the modern architectural details found in our
-processors (of course, Babbage worked with mechanical machines and not
-electronics). By a stroke of misfortune (probably as Babbage never
-published anything), Babbage's ideas were not widely known, and
-especially his designs fell into obscurity. They were only
-rediscovered in 1960s, much after the modern von Neumann architecture
-was designed. That two independent designs made a century apart should
-be so similar is remarkable.
-
-`Allan Bromley <https://en.wikipedia.org/wiki/Allan_G._Bromley>`_ is
-the credited for rediscovering Babbage's legacy. See his `paper
-<./_static/Bromley-1982.pdf>`_ in Annals of the History of Computing
-for a detailed overview of the Analytical Engine. Babbage's Difference
-engine has been built twice now. See `Computer History Museum page
-<https://www.computerhistory.org/babbage/>`_. Babbage also designed an
-extraordinary printer which was also built by the Science
-Museum. London. See `BBC news report
-<http://news.bbc.co.uk/2/hi/science/nature/710950.stm>`_.
-
-
-Album of Fluid Motion
-+++++++++++++++++++++
-
-Fluid flows can be extremely rich, displaying complex and highly
-nontrivial behavior. Of course, fluid and plasma turbulence remains a
-major open problem. A while ago, van Dyke created a book called "Album
-of Fluid Motion" is an excellent source of beautiful pictures of fluid
-flow. See `this link for a PDF of an older version
-<http://courses.washington.edu/me431/handouts/Album-Fluid-Motion-Van-Dyke.pdf>`_
-of the book. A good summer project would be to see how many of these
-pictures you can reproduce with computer simulations!
