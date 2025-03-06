@@ -9,9 +9,9 @@ velocity(double t, const double *xn, double *fout, void *ctx)
 {
   double x = xn[0], v = xn[1];
   // characteristics for Vlasov with a fixed potential of
-  // phi(x) = cos(x)
+  // phi(x) = x^2
   double ux = v; // characteristic vel in conf space
-  double Ex = sin(x); // Ex = -grad phi
+  double Ex = -2*x; // Ex = -grad phi
   fout[0] = ux; fout[1] = Ex;
 }
 
@@ -28,16 +28,16 @@ int
 main(void)
 {
   struct adiff_app_inp app_inp = {
-    .name = "sim-vlasov-pot",
+    .name = "sim-vlasov-shm-pot",
 
     .ndim = 2,
-    .cells = { 64, 64 },
-    // [0, 2 pi] x [-6vth, 6vth]
-    .lower = { 0.0, -6.0 },
-    .upper = { 2*GKYL_PI, 6.0 },
+    .cells = { 64, 128 },
+    // [-1.0, 1.0] x [-6vth, 6vth]
+    .lower = { -1.0, -6.0 },
+    .upper = { 1.0, 6.0 },
 
-    .nframe = 16,
-    .tend = 3.0,
+    .nframe = 10,
+    .tend = 20.0,
     .cfl_frac = 0.9,
 
     .scheme = SCHEME_C2_C2,

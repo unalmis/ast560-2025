@@ -22,7 +22,7 @@ calc_flux_central_2o(double vel, double fll, double fl, double fr, double frr)
   return 0.5*vel*(fr+fl);
 }
 
-// Third-order central
+// Third-order upwind
 static inline double
 calc_flux_upwind_3o(double vel, double fll, double fl, double fr, double frr)
 {
@@ -42,7 +42,7 @@ calc_diff2_central_2o(double dx, double fll, double fl, double f0, double fr, do
   return (fl-2.0*f0+fr)/(dx*dx);
 }
 
-// Third-order central
+// Fourth-order central
 static inline double
 calc_diff2_central_4o(double dx, double fll, double fl, double f0, double fr, double frr)
 {
@@ -270,7 +270,8 @@ write_data(struct gkyl_tm_trigger* iot, adiff_app* app, double t_curr)
   if (gkyl_tm_trigger_check_and_bump(iot, t_curr)) {
     int frame = iot->curr - 1;
     write_f(app, t_curr, frame);
-    write_vel(app, t_curr, frame);
+    if (frame == 0)
+      write_vel(app, t_curr, frame);
   }
 }
 
