@@ -10,11 +10,18 @@ build/*
 *~
 *.gkyl
 *.dat
+*.o
+
 
 code/gminus/.cache/
 code/gminus/compile_commands.json
 code/gminus/build/
 code/gminus/config.mak
+
+code/advection-diffusion/sim-1d-gauss
+code/advection-diffusion/sim-1d-sin
+code/advection-diffusion/sim-2d-rotflow
+code/advection-diffusion/sim-vlasov-pot
 
 notes/advection-diffusion/advection-diffusion.pdf
 notes/advection-diffusion/hw-advection-diffusion.pdf
