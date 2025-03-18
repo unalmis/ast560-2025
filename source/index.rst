@@ -14,4 +14,5 @@ released under the `Creative Commons CC BY License
   historical
   background
   advection-diffusion
+  hyper-pde
   kinetic-reading
