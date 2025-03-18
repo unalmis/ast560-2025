@@ -1,0 +1,966 @@
+\documentclass[12pt]{article}
+
+\usepackage{tikz}
+\usetikzlibrary{decorations.markings}
+
+%\usepackage{geometry}
+%\geometry{paperwidth=170mm, paperheight=240mm, left=42pt, top=40pt, textwidth=280pt, marginparsep=20pt, marginparwidth=100pt, textheight=560pt, footskip=40pt}
+
+%\documentclass[12pt]{amsart}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage{geometry}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{color}
+\usepackage{sidecap}
+\usepackage{physics}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{verse}
+\usepackage{hyperref}
+\usepackage{tensor}
+\usepackage{marginnote}
+\usepackage{wrapfig}
+\usepackage[font={small}]{caption}
+
+\newcommand{\gke}{\texttt{Gkeyll}}
+
+\newcommand{\attrib}[1]{
+\nopagebreak{\raggedleft\footnotesize #1\par}\vskip0.1in}
+\renewcommand{\poemtitlefont}{\normalfont\large\itshape\centering}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newtheorem{principle}{Principle}
+\theoremstyle{definition}
+\newtheorem{exmp}{Example}
+
+\theoremstyle{definition}
+\newtheorem{entry}{Entry}
+
+\theoremstyle{definition}
+\newtheorem{exer}{Exercise}
+
+% auto-scaled figured
+\newcommand{\incfig}{\centering\includegraphics}
+\setkeys{Gin}{width=0.9\linewidth,keepaspectratio}
+
+% Commonly used macros
+\newcommand{\eqr}[1]{Eq.\thinspace(#1)}
+\newcommand{\pfrac}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pfracc}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+\newcommand{\pfraccc}[1]{\frac{\partial^2 }{\partial #1^2}}
+\newcommand{\pfraca}[1]{\frac{\partial}{\partial #1}}
+\newcommand{\pfracb}[2]{\partial #1/\partial #2}
+\newcommand{\pfracbb}[2]{\partial^2 #1/\partial #2^2}
+\newcommand{\spfrac}[2]{{\partial_{#1}} {#2}}
+\newcommand{\mvec}[1]{\mathbf{#1}}
+\newcommand{\bmvec}[1]{\breve{\mathbf{#1}}}
+\newcommand{\gvec}[1]{\boldsymbol{#1}}
+\newcommand{\script}[1]{\mathpzc{#1}}
+\newcommand{\gcn}{\nabla}
+\newcommand{\gcs}{\nabla_{\mvec{x}}}
+\newcommand{\gvs}{\nabla_{\mvec{v}}}
+
+\newcommand{\resetall}{\setcounter{entry}{0}\setcounter{equation}{0}\setcounter{footnote}{0}}
+
+\newcommand{\cbas}[1]{\gvec{\sigma}_{#1}}
+\newcommand{\xbas}{\gvec{\sigma}_{1}}
+\newcommand{\ybas}{\gvec{\sigma}_{2}}
+\newcommand{\zbas}{\gvec{\sigma}_{3}}
+
+\newcommand{\basis}[1]{\mvec{e}_{#1}}
+\newcommand{\bbasis}[1]{\breve{\mvec{e}}_{#1}}
+\newcommand{\dbasis}[1]{\mvec{e}^{#1}}
+\newcommand{\bdbasis}[1]{\breve{\mvec{e}}^{#1}}
+
+\newcommand{\nbasis}[1]{\hat{\mvec{e}}_{#1}}
+\newcommand{\ndbasis}[1]{\hat{\mvec{e}}^{#1}}
+
+\newcommand{\gbasis}[2]{\mvec{#1}_{#2}}
+\newcommand{\gdbasis}[2]{\mvec{#1}^{#2}}
+
+\newcommand{\veps}{\gvec{\varepsilon}}
+\newcommand{\bdum}{\breve{\_}}
+\newcommand{\vecspace}{\mathcal{V}}
+\newcommand{\tvecspace}{T_pM}
+\newcommand{\vnorm}[1]{\lVert{#1}\rVert}
+
+\newcommand{\gsel}[2]{\langle{#1}\rangle_{#2}}
+\newcommand{\gzsel}[1]{\langle {#1} \rangle}
+
+\newcommand{\uln}[1]{\underline{#1}}
+
+\newcommand{\dprod}{\mathfrak{D}}
+
+\newcommand{\dvol}{\thinspace d^3\mvec{x}}
+\newcommand{\dsurf}{\thinspace ds}
+
+% Make the items smaller
+\newcommand{\cramplist}{
+	\setlength{\itemsep}{0in}
+	\setlength{\partopsep}{0in}
+	\setlength{\topsep}{0in}}
+\newcommand{\cramp}{\setlength{\parskip}{.5\parskip}}
+\newcommand{\zapspace}{\topsep=0pt\partopsep=0pt\itemsep=0pt\parskip=0pt}
+
+%\marginpar{\raggedleft\footnotesize Margin note}
+
+\title{AST560 2025: Hyperbolic Partial Differential Equations}%
+\author{Ammar H. Hakim}%
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\section{On Propagation of Small Perturbations. Definition of
+  Hyperbolic PDEs.}
+
+Hyperbolic partial differential equation (PDEs) appear everywhere in
+physics. A simple reason for this is that time exists (as far as we
+know), and that there is a maximum speed at which causal signals can
+propagate. In this section we first work through an informal
+definition of hyperbolic PDEs, giving the rigorous definition later.
+
+\begin{definition}[Hyperbolic PDE (Informal)]
+  A hyperbolic PDE is in one in which small perturbations around a
+  uniform equilibrium propagate at a finite speed without any damping
+  or dispersion.
+\end{definition}
+
+To understand how this definition leads to a mathematical condition,
+let us look at a generic system of first-order partial differential
+equations in 1D
+\begin{align}
+  \pfrac{\mvec{Q}}{t} + \pfrac{\mvec{F}}{x} = 0
+  \label{eq:hyp-1d}
+\end{align}
+where $\mvec{Q}(x,t)$ is a column vector of $m$ \emph{conserved
+  variables} and $\mvec{F} = \mvec{F}(\mvec{Q})$ is the corresponding
+column vector of \emph{fluxes}. To understand how a small perturbation
+propagates in this system we will linearize around a uniform initial
+condition $\mvec{Q}(x,0) = \mvec{Q}_0$ by writing
+\begin{align}
+  \mvec{Q}(x,t) = \mvec{Q}_0 + \mvec{Q}_1(x,t)
+\end{align}
+where $\mvec{Q}_1(x,t)$ is a small perturbation. Substituting this in
+\eqr{\ref{eq:hyp-1d}} we get
+\begin{align}
+  \pfrac{\mvec{Q}_1}{t} + 
+  \frac{\partial}{\partial x} \mvec{F}(\mvec{Q}_0 + \mvec{Q}_1)
+  =
+  0.
+\end{align}
+Expanding
+\begin{align}
+  \mvec{F}(\mvec{Q}_0 + \mvec{Q}_1)
+  =
+  \mvec{F}(\mvec{Q}_0) + \pfrac{\mvec{F}}{\mvec{Q}}(\mvec{Q}_0)
+  \mvec{Q}_1
+  + \ldots
+\end{align}
+we get
+\begin{align}
+  \pfrac{\mvec{Q}_1}{t} + 
+  \mvec{A}(\mvec{Q}_0)
+  \pfrac{\mvec{Q}_1}{x}
+  =
+  0.
+  \label{eq:lin-hyp-1d}
+\end{align}
+Here we have dropped all quadratic and higher nonlinearities and
+defined
+\begin{align}
+  \mvec{A} \equiv \pfrac{\mvec{F}}{\mvec{Q}}
+\end{align}
+as the \emph{flux Jacobian}. Note that the flux Jacobian is a
+$m\times m$ matrix and, in general, will depend on the state
+$\mvec{Q}$. When $\mvec{A}$ does not depend on $\mvec{Q}$ the system
+is called \emph{linear}. The system \eqr{\ref{eq:lin-hyp-1d}} is the
+linearized equation for the propagation of the perturbation
+$\mvec{Q}_1$. To understand the structure of this equation we can look
+at a single mode $\mvec{Q}_1(x,t) = e^{ikx} e^{-i\omega t}$ to get
+\begin{align}
+  [k \mvec{A}(\mvec{Q}_0) -  \omega\mvec{I}] \mvec{Q}_1 = 0
+\end{align}
+where $\mvec{I}$ is a $m \times m$ unit matrix. This is an eigenvalue
+problem and we see that the propagation of the mode will depend on the
+eigenvalues of the flux Jacobian $\mvec{A}(\mvec{Q}_0)$. Let
+$\lambda^p$ be the eigenvalues of $\mvec{A}(\mvec{Q}_0)$. Then the
+\emph{dispersion relation} is
+\begin{align}
+  \omega^p = k \lambda^p.
+\end{align}
+Clearly, the mode will propagate without any damping if all the
+$\lambda^p$ are \emph{real}. Also, there is no dispersion in this
+system as both the phase- and group-velocities are constant. Hence,
+this linearization shows that the PDE \eqr{\ref{eq:hyp-1d}} will be
+hyperbolic if the eigenvalues of the flux Jacobian are \emph{all
+  real}.
+
+Though we arrived at the condition for hyperbolicity via a
+linearization, this condition is, in fact, the defining property of
+hyperbolic PDEs even in the nonlinear case. This leads to the
+rigorous definition:
+
+\begin{definition}[Hyperbolic PDE]
+  A PDE
+  \begin{align*}
+    \pfrac{\mvec{Q}}{t} + \pfrac{\mvec{F}}{x} = 0
+  \end{align*}
+  is called \emph{hyperbolic} if the flux Jacobian
+  \begin{align*}
+    \mvec{A} \equiv \pfrac{\mvec{F}}{\mvec{Q}}
+  \end{align*}
+  has all real eigenvalues and a complete set of right eigenvectors
+  (or, in other words, is diagonalizable) for all valid solution
+  states $\mvec{Q}$. The system is called \emph{strictly hyperbolic}
+  if all eigenvalues are distinct and non-zero.
+\end{definition}
+
+\begin{remark}
+  Note that in this definition we have added an additional condition:
+  that $\mvec{A}$ must be diagonalizable. We will see why this
+  condition is needed below. When this condition is relaxed strange
+  things can happen, for example, the formation of delta-function
+  solutions. Note we also added the phrase ``for all valid solution
+  states''. In general, not all solution states are valid. For
+  example, for the Euler equations, which are hyperbolic, valid states
+  are those in which the \emph{density and pressure are
+    positive}. Often the valid states of a PDE are also referred to as
+  their \emph{invariant domains}.
+\end{remark}
+
+\begin{remark}
+  Most of the hyperbolic PDEs we encounter in physics are \emph{not}
+  strictly hyperbolic. There are often repeated eigenvalues and even
+  eigenvalues that are zero.
+\end{remark}
+
+We will denote $\lambda^p$ as the eigenvalues of the flux Jacobian,
+and $\mvec{r}^p$, $p=1,\ldots,m$ as the complete set of right
+eigenvectors (column vectors). Corresponding to these right
+eigenvectors we will denote the left eigenvectors (row vectors) as
+$\mvec{l}^p$. Note we must have
+$\mvec{l}^p \mvec{r}_q = \delta\indices{^p_q}$.
+
+We can extend this definition to a PDE in multiple dimensions as
+follows.
+\begin{definition}[Multi-Dimensional Hyperbolic PDE]
+  A PDE
+  \begin{align*}
+    \pfrac{\mvec{Q}}{t} 
+    + \pfrac{\mvec{F}}{x}
+    + \pfrac{\mvec{G}}{y}
+    + \pfrac{\mvec{H}}{z} = 0
+  \end{align*}
+  is called \emph{hyperbolic} if, for all unit vectors
+  $\mvec{n} = n_x \cbas{x} + n_y \cbas{y} + n_z \cbas{z}$, the flux
+  Jacobian
+  \begin{align*}
+    \mvec{A} \equiv 
+    n_x \pfrac{\mvec{F}}{\mvec{Q}}
+    + n_y \pfrac{\mvec{G}}{\mvec{Q}}
+    + n_y \pfrac{\mvec{H}}{\mvec{Q}}
+  \end{align*}
+  has all real eigenvalues and a complete set of right eigenvectors
+  (or, in other words, is diagonalizable) for all valid solution
+  states $\mvec{Q}$. We call the hyperbolic PDE \emph{isotropic} if
+  the eigenvalues of $\mvec{A}$ do not depend on the unit vector
+  $\mvec{n}$.
+\end{definition}
+
+Physically, if a hyperbolic PDE is isotropic, then the speed of
+propagation does not depend on the direction of the wave. Most
+hyperbolic PDEs one encounters are isotropic.
+
+Though we have written the PDE (see \eqr{\ref{eq:hyp-1d}}) in
+conservation form, a more general form is the \emph{quasilinear} form
+\begin{align}
+  \pfrac{\mvec{V}}{t} + \mvec{B}\pfrac{\mvec{V}}{x} = 0.
+  \label{eq:ql-hyp-1d}
+\end{align}
+Here $\mvec{V}$ is a column vector of $m$ quantities and
+$\mvec{B} = \mvec{B}(\mvec{V})$ is a $m\times m$ matrix that, in
+general, depends on $\mvec{V}$. We call a quasilinear PDE hyperbolic
+if the eigenvalues of $\mvec{B}$ are all real and $\mvec{B}$ is
+diagonalizable. 
+
+We can transform a equation written in conservation law form to the
+quasilinear form, but it is not always possible to do the
+opposite. Consider the 1D conservation law
+\begin{align}
+  \pfrac{\mvec{Q}}{t} + \pfrac{\mvec{F}}{x} = 0
+\end{align}
+and let $\mvec{V}$ be related by the invertible transform.
+\begin{align}
+  \mvec{Q} = \varphi(\mvec{V}).
+\end{align}
+Then, substituting this in the conservation law we get the quasilinear
+form
+\begin{align}
+  \pfrac{\mvec{V}}{t}
+  +
+  \big(\varphi' \big)^{-1} \mvec{A} \varphi' \pfrac{\mvec{V}}{x} = 0.
+\end{align}
+Here $\varphi'$ is the Jacobian of the transform and $\mvec{A}$ is the
+flux Jacobian of the conservation law. Define
+\begin{align}
+  \mvec{B} \equiv \big(\varphi' \big)^{-1} \mvec{A} \varphi'.
+\end{align}
+Let $\lambda^p$, $\mvec{r}^p$ and $\mvec{l}^p$ be the eigenvalues,
+right- and left-eigenvectors of $\mvec{B}$ respectively. Then, we have
+\begin{align}
+  \mvec{B}\mvec{r}^p 
+  = \lambda^p \mvec{r}^p
+  = \big(\varphi' \big)^{-1} \mvec{A} \varphi' \mvec{r}^p.
+\end{align}
+Left multiply by $\varphi'$ to see that $\lambda^p$ are also the
+eigenvalues of $\mvec{A}$, and $\varphi' \mvec{r}^p$ are the right
+eigenvectors of $\mvec{A}$. In the same way we see that
+$\mvec{l}^p \big(\varphi' \big)^{-1}$ are the left eigenvectors of
+$\mvec{A}$. Hence, knowing the eigensytem of the quasilinear form of
+the equations we can easily compute the eigensytem of the conservation
+law form. Often, for complex nonlinear equations it is, in fact, much
+easier to work with the quasilinear form and so the above procedure
+is very useful.
+
+\section{Examples of Hyperbolic PDEs}
+
+We will now look at a sequence of examples of hyperbolic PDEs that
+arize in fluid mechanics and plasma physics. One can multiple the
+examples given below to many more systems: hyperbolic PDEs are
+essentially universal, and arise 
+
+\subsection{Linear Advection Equation}
+
+One example we have already seen and studied earlier is the advection
+equation
+\begin{align}
+  \pfrac{f}{t} + \pfraca{x}(u f) = 0.
+\end{align}
+This is the simplest \emph{linear} scalar hyperbolic PDE. It has a
+single eigenvalue $\lambda^1 = u$. Despite its extreme simplicity, the
+linear advection equation is the fundamental equation that provides
+insight into solving more complex systems of equations, including
+nonlinear equations, specially numerically.
+
+\subsection{Burgers Equation}
+
+The simplest nonlinear scalar hyperbolic PDE is the \emph{Burgers
+  equation}
+\begin{align}
+  \pfrac{u}{t} + \pfraca{x} \left(\frac{1}{2} u^2 \right) = 0.
+\end{align}
+For this equation, $Q = u$ and $F(Q) = u^2/2$. Hence, the flux
+Jacobian is just a scalar $A = u$, and the single eigenvalue is
+$\lambda^1 = u$. Notice something very important: the eigenvalue
+depends on the solution itself. Hence, the propagation speed, in
+general, will vary from point to point, and, in fact, may change
+signs.
+
+\subsection{Maxwell Equations}
+
+Maxwell equations are the simplest \emph{system} of linear hyperbolic
+PDEs that occur in physics. In free-space, we can write them in curl
+form as
+\begin{align}
+  \frac{\partial \mathbf{B}}{\partial t} + \nabla\times\mathbf{E} &= 0 \\
+  \epsilon_0\mu_0\frac{\partial \mathbf{E}}{\partial t} -
+  \nabla\times\mathbf{B} &= 0
+\end{align}
+Here, $\mathbf{E}$ is the electric field, $\mathbf{B}$ is the magnetic
+flux density, and $\epsilon_0$, $\mu_0$ are permittivity and
+permeability of free space. The speed of light is determined from
+$c=1/(\mu_0\epsilon_0)^{1/2}$.
+
+These are linear equations and hence the eigensytem is independent of
+the value of the electromagnetic fields. In 1D Maxwell equations can
+be written as
+\begin{align}
+  \frac{\partial }{\partial t}
+  \left[
+    \begin{matrix}
+      E_x \\
+      E_y \\
+      E_z \\
+      B_x \\
+      B_y \\
+      B_z
+    \end{matrix}
+  \right]
+  +
+  \frac{\partial }{\partial x}
+  \left[
+    \begin{matrix}
+      0 \\
+      c^2B_z \\
+      -c^2B_y \\
+      0 \\
+      -E_z \\
+      E_y
+    \end{matrix}
+  \right]
+  =
+  0.
+\end{align}
+
+The eigenvalues of this system are $-c,-c,c,c,0,0$. Note the repeated
+eigenvalues and also the zero eigenvalues. Hence, Maxwell equations
+are \emph{not} strictly hyperbolic. Despite this, they posses a
+complete set of right eigenvectors. A simple calculation (easily done
+in a computer algebra system) shows that the right eigenvectors are
+the columns of the following matrix
+\begin{align}
+  \mvec{R}
+  =
+  \left[
+    \begin{matrix}
+    0&0&0&0&1&0 \\ 
+    1&0&1&0&0&0 \\ 
+    0&1&0&1&0&0 \\ 
+    0&0&0&0&0&1 \\ 
+    0&{{1}\over{c}}&0&-{{1}\over{c}}&0&0 \\ 
+    -{{1}\over{c}}&0&{{1}\over{c}}&0&0&0
+    \end{matrix}
+  \right]  
+\end{align}
+and the left eigenvectors are the rows of the matrix
+\begin{align}
+  \mvec{L}
+  =
+  \left[
+    \begin{matrix}
+    0&{{1}\over{2}}&0&0&0&-{{c}\over{2}} \\
+    0&0&{{1}\over{2}}&0&{{c}\over{2}}&0 \\
+    0&{{1}\over{2}}&0&0&0&{{c}\over{2}} \\ 
+    0&0&{{1}\over{2}}&0&-{{c}\over{2}}&0 \\
+    1&0&0&0&0&0 \\ 
+    0&0&0&1&0&0
+    \end{matrix}
+  \right].  
+\end{align}
+
+\subsection{The Isothermal Euler Equations}
+
+The simplest system of \emph{nonlinear} hyperbolic PDEs that appears
+in fluid mechanics is the isothermal Euler equations. These equations
+describe the motion of an ideal fluid (that is, one with no viscosity
+or heat-conduction) with a \emph{constant} temperature. In 1D these
+equations can be written as
+\begin{align}
+  \frac{\partial}{\partial{t}}
+  \left[
+    \begin{matrix}
+      \rho \\
+      \rho u
+    \end{matrix}
+  \right]
+  +
+  \frac{\partial}{\partial{x}}
+  \left[
+    \begin{matrix}
+      \rho u \\
+      \rho u^2 + \rho a^2
+    \end{matrix}
+  \right]
+  =
+  0  
+\end{align}
+where $\rho$ is the fluid mass density, $u$ is the fluid velocity and
+$a$ is a constant with units of speed. (This is, in fact, the sound
+speed). The first of these equations is the \emph{continuity equation}
+and the second is the \emph{momentum equation}.
+
+To compute the eigenvalues of the isothermal Euler equation (and other
+nonlinear systems) it is actually much easier to work with the
+quasilinear form. The momentum equation can be written as
+\begin{align}
+  \rho\pfrac{u}{t} + 
+  \underbrace{
+  u \pfrac{\rho}{t}
+  + u \pfraca{x}(\rho u)
+  }_{0}
+  + \rho u \pfrac{u}{x}
+  +
+  a^2 \pfrac{\rho}{x}
+  =
+  0.
+\end{align}
+where we used the continuity equation to eliminate the second and
+third terms. Hence, we get that the isothermal Euler equation is
+equivalent to the quasilinear system
+\begin{align}
+  \frac{\partial}{\partial{t}}
+  \left[
+    \begin{matrix}
+      \rho \\
+      u
+    \end{matrix}
+  \right]
+  +
+  \left[
+    \begin{matrix}
+      u & \rho \\
+      a^2/\rho & u
+    \end{matrix}
+  \right]
+  \frac{\partial}{\partial{x}}
+  \left[
+    \begin{matrix}
+      \rho \\
+       u
+    \end{matrix}
+  \right]
+  =
+  0.
+\end{align}
+Thus, we have
+\begin{align}
+  \mvec{B}
+  =
+  \left[
+    \begin{matrix}
+      u & \rho \\
+      a^2/\rho & u
+    \end{matrix}
+  \right].  
+\end{align}
+Computing the eigenvalues of this matrix we get that the eigenvalues
+of the isothermal Euler equations are $\lambda^{1,2} = u \pm a$. We
+can also show that as long as $a > 0$, we have a complete set of
+eigenvectors, hence showing that the isothermal Euler equations are
+hyperbolic.
+
+\subsection{The Euler Equations}
+
+Probably the most important hyperbolic PDEs are the Euler equations
+for ideal fluids. These equations are extremely useful, both by
+themselves, and also as building blocks of more complex equations in
+fluid dynamics and plasma physics. For example, the compressible
+Navier-Stokes equations can be built from these by adding non-ideal
+terms (viscosity and heat-conduction). For plasma physics, Euler
+equations can describe \emph{two-fluid} plasmas, in which each plasma
+species is treated as a separate charged fluid, coupled by
+electromagnetic fields and collisions. In fact, these two-fluid
+systems (with additional physics to include non-ideal terms) contain
+physics beyond MHD and are required to properly study, for example,
+magnetic reconnection, instabilities in various fusion systems, and
+space and astrophysical plasmas.
+
+In 1D the Euler equations can be written in conservative form as
+\begin{align}
+  \frac{\partial}{\partial{t}}
+  \left[
+    \begin{matrix}
+      \rho \\
+      \rho u \\
+      \rho v \\
+      \rho w \\
+      E
+    \end{matrix}
+  \right]
+  +
+  \frac{\partial}{\partial{x}}
+  \left[
+    \begin{matrix}
+      \rho u \\
+      \rho u^2 + p \\
+      \rho uv \\
+      \rho uw \\
+      (E+p)u
+    \end{matrix}
+  \right]
+  =
+  0
+\end{align}
+where
+\begin{align}
+  E = \rho \varepsilon + \frac{1}{2}\rho (u^2 + v^2 + w^2)
+\end{align}
+is the total energy and $\varepsilon$ is the internal energy of the
+fluid. The pressure is given by an equation of state (EOS)
+$p=p(\varepsilon, \rho)$. For an ideal gas the EOS is
+\begin{align}
+  p =(\gamma-1)\rho \varepsilon.
+\end{align}
+For a neutral fluid, usually we set $\gamma = 1.4$, while for a plasma
+$\gamma = 5/3$.
+
+Computing the eigensystem of the Euler equations is not
+trivial. However, the task is made much more tractable by transforming
+the system to quasilinear form and using a computer algebra system. We
+find is that the eigenvalues are
+\begin{align}
+  \lambda^1, \lambda^2, \lambda^3, \lambda^4, \lambda^5
+  =
+  u-c, u, u, u, u+c,
+\end{align}
+where $c$ is the sound-speed given by
+\begin{align}
+  c &= \sqrt{\frac{\partial p}{\partial \rho} 
+    + \frac{p}{\rho^2}\frac{\partial p}{\partial \varepsilon}}.  
+\end{align}
+In general, to compute the sound speed we need the equation of state
+(EOS). Sometimes, the EOS is given as an analytical formula, but more
+often is in tabulated form. The National Ignition Facility (NIF), for
+example, is an experiment to collect the equation of state for
+elements (and mixtures) used in nuclear weapons. Less aggressively
+(but more energetically), for example, neutron star crust simulations
+also require a semi-analytical EOS to properly simulate their
+dynamics. The eigenvalues are all real if the sound-speed is
+real. This, of course, depends on the EOS. For the ideal gas EOS, we
+see that
+\begin{align}
+  c &= \sqrt{\frac{\gamma p}{\rho}}.
+\end{align}
+This remains real as long as $\rho > 0$ and $p > 0$. These conditions
+on density and pressure (the invariant domain) restrict the valid
+states a fluid can take.
+
+The right eigenvectors are given by the columns of the matrix
+\begin{align}
+  R
+  =
+  \left[
+    \begin{matrix}
+      1 & 0 & 0 & 1 & 1 \\
+      u-c & 0 & 0 & u & u+c \\
+      v & 1 & 0 & v & v \\
+      w & 0 & 1 & w & w \\
+      h-uc & v & w & h-c^2/b & h+uc
+    \end{matrix}
+  \right].
+  \label{eq:euler-rev}
+\end{align}
+Here, $h$ is the \emph{enthalpy} of the fluid given by
+\begin{align}
+  h &= (E+p)/\rho.
+\end{align}
+Also
+\begin{align}
+  b = \frac{1}{\rho}\frac{\partial p}{\partial \varepsilon}.
+\end{align}
+
+From this discussion it becomes clear that the Euler equations are an
+extremely complex, nonlinear system of equations. Things become even
+more complicated for general EOS. Of course, further extensions to
+these fundamental systems are possible, in particular, to (special and
+general) relativistic problems. For high-energy astrophysics problems,
+in fact, one must use these relativistic extensions to the Euler
+equations as the energies and speeds encountered in extreme plasma
+environments (for example, around black holes and neutron stars) can
+be ultra-relativistic.
+
+\subsection{The Ideal MHD Equations}
+
+In plasma physics the single most important set of equations are the
+ideal MHD equations. These are the foundation of all of plasma
+physics, including the theory of equilibrium and stability of tokamaks
+and stellarators, and the proper understanding of everything from
+space to astrophysical plasmas.
+
+Ideal MHD is a pre-Maxwell theory in the sense that the displacement
+currents are ignored (hence, no electromagnetic waves) and the plasma
+is treated as a conducting fluid. The equations consist of the
+\emph{continuity} equation
+\begin{align}
+  \pfrac{\rho}{t} + \nabla\cdot(\rho\mvec{u}) = 0,
+\end{align}
+and the \emph{momentum equation}
+\begin{align}
+  \frac{\partial \mathbf{u}}{\partial t}+\mathbf{u} \cdot \nabla \mathbf{u}
+  +\frac{\nabla p}{\rho} &= 
+                           {\frac{1}{\mu_{0}\rho}(\nabla \times \mathbf{B}) \times \mathbf{B}}
+                           \label{eq:mhd-mom}  
+\end{align}
+where $\mvec{B}$ is the magnetic field. The evolution of the field is
+determined by the \emph{induction equation}
+\begin{align}
+  \pfrac{\mvec{B}}{t} + \nabla\times\mvec{E} = 0
+\end{align}
+where $\mvec{E} = -\mvec{u}\times\mvec{B}$ (ideal Ohm's Law). Finally,
+for an ideal plasma, the pressure evolves according to
+\begin{align}
+  \pfrac{p}{t} + \mvec{u}\cdot\nabla p = -\gamma p
+  \nabla\cdot\mvec{u}.
+  \label{eq:mhd-press}
+\end{align}
+
+Using some algebraic manipulations we can show that the momentum
+equation can be written in the conservative form as
+\begin{align}
+  \frac{\partial}{\partial t}(\rho\mvec{u})
+  + \nabla\cdot \mvec{T} = 0
+  \label{eq:mhd-mom-cons}
+\end{align}
+where
+\begin{align}
+  \mvec{T} = \rho\mvec{u}\otimes\mvec{u}
+  +
+  \left(p + \frac{\mvec{B}^2}{2\mu_0} \right)\mvec{g}
+  -\frac{1}{\mu_0} \mvec{B}\otimes\mvec{B}.
+\end{align}
+is a \emph{symmetric} second-order tensor describing the momentum
+flux, and $\mvec{g}$ is the metric tensor.
+
+Some rather hairy manipulations allow us to derive evolution equations
+for the kinetic-energy
+\begin{align}
+  \frac{\partial}{\partial t}
+  \left(
+  \frac{1}{2}\rho\mvec{u}^2
+  \right)
+  +
+  \nabla\cdot
+  \left[
+  \frac{1}{2}\rho\mvec{u}^2\mvec{u}
+  +
+  \left(p+\frac{\mvec{B}^2}{2\mu_0}\right)\mvec{u}
+  \right]
+  =
+  \left(p+\frac{\mvec{B}^2}{2\mu_0}\right)\nabla\cdot\mvec{u}
+  +
+  \frac{1}{\mu_0}
+  \mvec{u}\cdot
+  \left[
+  (\mvec{B}\cdot\nabla)\mvec{B}
+  \right],
+\end{align}
+the internal energy 
+\begin{align}
+  \frac{\partial}{\partial t}\left(\frac{p}{\gamma-1}\right)
+  +
+  \nabla\cdot
+  \left(\mvec{u}\frac{p}{\gamma-1}\right)
+  =
+  -p\nabla\cdot\mvec{u},
+\end{align}
+and the magnetic field energy
+\begin{align}
+  \frac{\partial}{\partial t}\left(\frac{\mvec{B}^2}{2\mu_0} \right)
+  -\nabla\cdot
+  \left(
+  \frac{1}{\mu_0}(\mvec{u}\cdot\mvec{B})\mvec{B}
+  -
+  \frac{\mvec{B}^2}{2\mu_0}\mvec{u}
+  \right)
+  =
+  -\frac{\mvec{B}^2}{2\mu_0}\nabla\cdot\mvec{u}
+  -
+  \frac{1}{\mu_0}\mvec{u}\cdot[(\mvec{B}\cdot\nabla)\mvec{B}].
+\end{align}
+
+These evolution equations for the various components of the energy
+show how energy can be exchanged between various components of the
+fluid and the field: internal energy and kinetic energies are
+exchanged via the fluid compressibility, and kinetic and field
+energies through a complicated set of terms involving compressibility
+and currents and electric field (effectively, an
+$\mvec{E}\cdot\mvec{J}$ term).
+
+Rather neatly, if we add all the components of the energy up the
+right-hand sides all cancel, and we get that the \emph{total energy}
+\begin{align}
+  \mathcal{E}
+  \equiv
+  \frac{1}{2}\rho\mvec{u}^2
+  +
+  \frac{p}{\gamma-1}
+  +
+  \frac{\mvec{B}^2}{2\mu_0}
+\end{align}
+evolves as
+\begin{align}
+  \pfrac{\mathcal{E}}{t}
+  +
+  \nabla\cdot
+  \left[
+  (\mathcal{E}+p^*)\mvec{u} - \frac{1}{\mu_0}(\mvec{u}\cdot\mvec{B})\mvec{B}
+  \right]
+  =
+  0
+\end{align}
+where the total (fluid + magnetic-field) pressure is defined as
+\begin{align}
+  p^* \equiv p + \frac{\mvec{B}^2}{2\mu_0}.
+\end{align}
+
+Of course, the evolution of the total energy equation is very
+important. However, I should point out that equally important are the
+evolution of the components of the energy, as these fundamentally
+determine energizaton processes, and also how turbulence manifests
+itself in MHD. In fact, it is \emph{extremely difficult} (perhaps
+impossible) to develop generic numerical schemes that account for both
+proper transfer between various components of the energy, and also at
+the same time account for shocks and other features of
+compressibility. As nature would have it, these are the cutting-edge
+regimes of interest for modern, high-energy plasma physics.
+
+It is clear that computing the eigensystem of this formidable set of
+equation is highly non-trivial. However, again, it is easiest to work
+in the quasilinear form of the equations and use a computer algebra
+system. One finds that indeed the ideal MHD equation is hyperbolic.
+
+\section{Discontinous Solutions and Entropy Conditions}
+
+One of the defining features of the hyperbolic PDEs is the formation
+of \emph{shocks}, \emph{rarefaction fans} and \emph{contact
+  discontinuities}. We will now see how these arise by looking first
+at the simplest nonlinear scalar hyperbolic PDEs, the Burgers
+equation. However, first consider the scalar quasilinear PDE
+\begin{align}
+  \pfrac{V}{t} + a(V)\pfrac{{V}}{x} = 0
+\end{align}
+for $-\infty < x < \infty$. For this system we simply have a single
+eigenvalue, $\lambda^1 = a(V)$. This equation also indicates that if
+we define \emph{characteristics} in the $(x,t)$ plane:
+\begin{align}
+  x = \lambda^1 t + C = a(V) t + C
+\end{align}
+where $C$ is some constant, then the solution will remain constant
+along those characteristics. (Of course, different characteristics
+will, in general, have different values of $V$).
+
+\begin{figure}
+  \setkeys{Gin}{width=0.95\linewidth,keepaspectratio}
+  \incfig{burgers-shock.pdf} 
+  \caption{To avoid multi-valued solutions due to converging
+    characteristics (right) we must allow \emph{discontinuous}
+    solutions to Burgers equation. These \emph{shock solutions} (left)
+    are only defined \emph{weakly}, in the sense that they satisfy the
+    weak-form of the equation and not the strong form.}
+  \label{fig:burgers-shock}
+\end{figure}
+
+We can use this \emph{method of characteristics} to solve the Burgers
+equation
+\begin{align}
+  \pfrac{u}{t} + \pfraca{x} \left(\frac{1}{2} u^2 \right) = 0
+\end{align}
+with initial conditions $u(x,0) = u_0(x)$. Here the characteristic
+speed is just $u$, and hence the characteristics are $x = u t +
+C$. Now consider some point $x_0$ at $t=0$. Then we must have
+$C = x_0$. As the characteristic velocity at that point is $u_0(x_0)$,
+the characteristic must be
+\begin{align}
+  x  = u_0(x_0) t + x_0.
+  \label{eq:burg-char}
+\end{align}
+As the solution remains constant along characteristics, the exact
+solution to Burgers equation can be easily written as
+\begin{align}
+  u(x,t) = u_0(x_0)
+\end{align}
+where $x_0$ is determined from \eqr{\ref{eq:burg-char}}. At this point
+we may think we have found a general solution to the 1D Burgers
+equation. However, it is not so. Consider the case shown in the
+Fig.\thinspace\ref{fig:burgers-shock}. Here we see that
+characteristics \emph{intersect} after some finite-time. As the
+solutions are constant along characteristics this would mean that the
+solution at the point of intersection are multi-valued! To avoid this
+undesirable situation we must introduce \emph{shock solutions}, that
+is, solutions that are \emph{discontinuous}. 
+
+Discontinuous solutions, of course, do not have well-defined
+deriviatives (their derivatives are \emph{distributions}, or delta
+functions). Hence, we are led to consider the notion of
+\emph{weak-solutions} of hyperbolic PDEs. These are ``derived'' by
+multiplying \eqr{\ref{eq:hyp-1d}} by a compact, smooth function
+$\phi(x,t)$ (that, a function that has smooth derivatives and vanishes
+outside some bounded region) and integrating over all time and space:
+\begin{align}
+    \int_0^\infty  \int_{-\infty}^\infty \phi(x,t)
+    \bigg[\pfrac{\mvec{Q}}{t} + \pfrac{\mvec{F}}{x}\bigg]\thinspace
+    dx\thinspace dt = 0.
+\end{align}
+Integrating by parts we get
+\begin{align}
+    \int_0^\infty  \int_{-\infty}^\infty 
+    \bigg[\pfrac{\phi}{t} \mvec{Q} + \pfrac{\phi}{x} \mvec{F}\bigg]\thinspace
+    dx\thinspace dt
+    =
+    -
+    \int_{-\infty}^\infty \phi(x,0) \mvec{Q}(x,0) dx.  
+  \label{eq:hyp-weak-form}
+\end{align}
+Note that constructing this weak-form from the PDE is not fully
+rigorous. In fact, we must \emph{turn the process around} and forget
+the PDE and instead use the weak-form to \emph{define} valid the
+solutions to hyperbolic PDEs.
+
+\begin{definition}[Weak-solution]
+  A function $\mvec{Q}(x,t)$ is said to be a weak-solution if it
+  satisfies the weak-form, \eqr{\ref{eq:hyp-weak-form}}, for all
+  compact, smooth $\phi(x,t)$.
+\end{definition}
+
+A shock solution to a hyperbolic PDE is one that satisfies the
+weak-form. Let $s$ the \emph{shock-speed} and the discontinuity exist
+at some point $x$ and time $t$. Taking a small space-time interval
+around $(x,t)$ we can show that the jump in
+$\mvec{Q} = \mvec{Q}_R-\mvec{Q}_L$ and jump in flux
+$\mvec{F} = \mvec{F}_R-\mvec{F}_L$ must be related by the
+Rankine-Hugoniot jump condition
+\begin{align}
+  s(\mvec{Q}_R-\mvec{Q}_L) = \mvec{F}_R-\mvec{F}_L.
+\end{align}
+
+Plugging in the specific case for Burgers equation we get
+\begin{align}
+  s(u_R - u_L) = \frac{1}{2}( u_R^2 - u_L^2 )
+\end{align}
+or that
+\begin{align}
+  s = \frac{1}{2}( u_R + u_L ).
+\end{align}
+Hence, a shock front in Burgers equation will move with the
+\emph{mean} of the characteristic speeds computed from the left/right
+states.
+
+\begin{figure}
+  \setkeys{Gin}{width=0.95\linewidth,keepaspectratio}
+  \incfig{burgers-rarefaction.pdf} 
+  \caption{Diverging charactertics (right) leave behind a ``void'' in
+    the $(x,t)$ plain, allowing us to fill it with many possible
+    ways. This \emph{non-uniqueness} of solutions is solved by
+    introducing \emph{entropy}, a scalar quantity that must be
+    \emph{non-increasing} for all valid solutions of the PDE.}
+  \label{fig:burgers-rare}
+\end{figure}
+
+Rather unfortunately, the weak-form of the solution does not uniquely
+determine all solutions to hyperbolic PDEs. This is again seen in the
+Burgers equations already, in the case when the characteristics
+\emph{diverge}. See Fig.\thinspace\ref{fig:burgers-rare}. This shows
+that when the characteristics diverge they leave behind a ``void'' in
+the $(x,t)$ plain. We could fill this in many ways yet satisfy the
+weak-form of the PDE. Hence, diverging characteristics lead to
+non-uniqueness of solutions!
+
+One way to fix this non-uniqueness is to introduce a \emph{entropy}
+function. This is a scalar function, $s = s(\mvec{Q})$ that satisfies
+the PDE
+\begin{align}
+  \pfrac{s}{t} + \pfrac{{f}_s}{x} \le 0
+\end{align}
+where ${f}_s = {f}_s\big(s(\mvec{Q})\big)$ is an \emph{entropy
+  flux}. That is, the entropy is a \emph{non-increasing} function of
+time. Imposing that entropy be \emph{decreasing} across any solution
+we construct across diverging characteristics, picks out a unique
+solution. This solution is called a \emph{rarefaction} wave, and for
+Burgers equation is show on the left of
+Fig.\thinspace\ref{fig:burgers-rare}.
+
+\end{document}
+
