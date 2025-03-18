@@ -1,4 +1,4 @@
-Section 3: Hyperbolic Partial Differential Equations
+Section 2: Hyperbolic Partial Differential Equations
 ----------------------------------------------------
 
 .. note::
