@@ -38,9 +38,10 @@ main(void)
 
     .nframe = 10,
     .tend = 20.0,
-    .cfl_frac = 0.9,
+    .cfl_frac = 0.4,
 
-    .scheme = SCHEME_C2_C2,
+    // .scheme = SCHEME_C2_C2,
+    .scheme = SCHEME_U3_C4,
 
     .init = init,
     .velocity = velocity,

@@ -23,7 +23,7 @@ static inline double calc_flux_central_2o(double vel, double fll, double fl,
 // Third-order upwind
 static inline double calc_flux_upwind_3o(double vel, double fll, double fl,
                                          double fr, double frr) {
-  return (vel > 0 ? 3 * fr + 6 * fl - fll : 3 * fl + 6 * fr - frr) / 8;
+  return (vel > 0 ? 3 * fr + 6 * fl - fll : 3 * fl + 6 * fr - frr) * vel / 8;
 }
 
 // Different stencils for second-order derivatives: the cell-spacing
