@@ -271,7 +271,7 @@ follows.
     \mvec{A} \equiv 
     n_x \pfrac{\mvec{F}}{\mvec{Q}}
     + n_y \pfrac{\mvec{G}}{\mvec{Q}}
-    + n_y \pfrac{\mvec{H}}{\mvec{Q}}
+    + n_z \pfrac{\mvec{H}}{\mvec{Q}}
   \end{align*}
   has all real eigenvalues and a complete set of right eigenvectors
   (or, in other words, is diagonalizable) for all valid solution
@@ -949,18 +949,102 @@ weak-form of the PDE. Hence, diverging characteristics lead to
 non-uniqueness of solutions!
 
 One way to fix this non-uniqueness is to introduce a \emph{entropy}
-function. This is a scalar function, $s = s(\mvec{Q})$ that satisfies
+function. This is a scalar function, $S = S(\mvec{Q})$ that satisfies
 the PDE
 \begin{align}
-  \pfrac{s}{t} + \pfrac{{f}_s}{x} \le 0
+  \pfrac{S}{t} + \pfrac{{F}_s}{x} \le 0
 \end{align}
-where ${f}_s = {f}_s\big(s(\mvec{Q})\big)$ is an \emph{entropy
+where ${F}_s = {F}_s\big(s(\mvec{Q})\big)$ is an \emph{entropy
   flux}. That is, the entropy is a \emph{non-increasing} function of
 time. Imposing that entropy be \emph{decreasing} across any solution
 we construct across diverging characteristics, picks out a unique
 solution. This solution is called a \emph{rarefaction} wave, and for
 Burgers equation is show on the left of
 Fig.\thinspace\ref{fig:burgers-rare}.
+
+\section{A Gallery of Riemann Problems}
+
+The \emph{Riemann problem} is a fundamental problem in the study of
+hyperbolic PDEs. It is an initial-value problem that looks at the
+decomposition of an initial discontinuity at $x=0$. For nonlinear
+hyperbolic PDEs the structure of the solutions can be surprisingly
+complicated. For several nonlinear hyperbolic PDEs one can construct
+the exact solution to the Riemann problem, though this is a highly
+non-trivial task, and often involves complex root finding and
+nonlinear algebraic solves.
+
+Formally, the Riemann problem can be stated as follows. For the
+hyperbolic PDE
+\begin{align}
+  \pfrac{\mvec{Q}}{t} + \pfrac{\mvec{F}}{x} = 0  
+\end{align}
+find $\mvec{Q}(x,t)$ for $t>0$ on $-\infty < x < \infty$ given the
+initial conditions
+\begin{align}
+  \mvec{Q}(x,0) &= \mvec{Q}_L \quad x<0 \\
+  \mvec{Q}(x,0) &= \mvec{Q}_R \quad x>0.
+\end{align}
+
+Below, I present the solution to Riemann problems for various example
+equation systems presented above.
+
+\begin{figure}[h]
+  \setkeys{Gin}{width=0.45\linewidth,keepaspectratio}
+  \incfig{burgers-sin.png} 
+  \incfig{burgers-shock.png} 
+  \caption{(Left) Steeping (orange) of an initial mode (blue) due to
+  the nonlinear characteristic velocity of the Burgers
+  equation. (Right) Rarefaction fan and shock in the Burgers Riemann
+  problem.}
+  \label{fig:burgers-rp}
+\end{figure}
+
+\begin{figure}[h]
+  \setkeys{Gin}{width=0.32\linewidth,keepaspectratio}
+  \incfig{euler-density.png} 
+  \incfig{euler-velocity.png} 
+  \incfig{euler-pressure.png} 
+  \caption{Density (left), velocity (middle) and pressure (right) from
+    the solution of the \emph{Sod-Shock} Euler Riemann problem for
+    Euler equations. These figures show three features: a rarefaction
+    fan, a contact discontinuity (across which only density is
+    discontinous), and a shock (across which all quantities have a
+    jump).}
+  \label{fig:euler-rp}
+\end{figure}
+
+\begin{figure}[h]
+  \setkeys{Gin}{width=0.32\linewidth,keepaspectratio}
+  \incfig{mhd-density.png} 
+  \incfig{mhd-xvelocity.png} 
+  \incfig{mhd-yvelocity.png} 
+  \incfig{mhd-By.png} 
+  \incfig{mhd-mag-pressure.png} 
+  \incfig{mhd-pressure.png} 
+  \caption{Density, X- and Y-velocities (top, left to right), $B_y$,
+    magnetic pressure and fluid pressure (bottom, left to right) from
+    the solution to the \emph{Brio-Wu} MHD Riemann problem. Besides
+    the features seen in the Euler Riemann problem, also seen is the
+    \emph{compound wave} (spike-like structure). Also notice that as
+    the magnetic field is frozen into the fluid, complex structures
+    form in the $B_y$ component of the field also.}
+  \label{fig:mhd-rp}
+\end{figure}
+
+\begin{figure}[h]
+  \setkeys{Gin}{width=0.32\linewidth,keepaspectratio}
+  \incfig{cold-fluid-0.png} 
+  \incfig{cold-fluid-1.png} 
+  \incfig{cold-fluid-2.png} 
+  \caption{Riemann problem solution to the \emph{cold} fluid
+    equations. For this system there is only a single eigenvalue and
+    the eigensystem is not diagonalizable. Hence, this system is
+    \emph{not} hyperbolic. This leads to the formation of
+    $\delta$-function shocks. The left plot shows two ``clouds''
+    moving towards each other, the middle plot shows the clouds
+    starting to merge, and the right plot shows the $\delta$-shock.}
+  \label{fig:euler-rp}
+\end{figure}
 
 \end{document}
 
