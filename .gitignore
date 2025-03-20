@@ -18,6 +18,7 @@ code/gminus/compile_commands.json
 code/gminus/build/
 code/gminus/config.mak
 
+code/advection-diffusion/.cache/
 code/advection-diffusion/sim-1d-gauss
 code/advection-diffusion/sim-1d-sin
 code/advection-diffusion/sim-2d-rotflow
@@ -26,3 +27,6 @@ code/advection-diffusion/sim-vlasov-shm-pot
 code/advection-diffusion/compile_commands.json
 notes/advection-diffusion/advection-diffusion.pdf
 notes/advection-diffusion/hw-advection-diffusion.pdf
+
+
+notes/hyper-pdes/hyper-pdes.pdf
